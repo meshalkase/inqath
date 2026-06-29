@@ -221,9 +221,29 @@ footer{text-align:center; color:var(--faint); font-size:.72rem; padding:18px 0 6
 .tnote{margin-top:10px; font-size:.82rem; color:var(--good); background:rgba(127,209,163,.09); border:1px solid rgba(127,209,163,.3); border-radius:9px; padding:8px 11px; line-height:1.7}
 
 @media (prefers-reduced-motion: reduce){ .card{transition:none} .rb:hover{transform:none} .ctile:hover{transform:none} .critbar:hover{transform:none} }
+
+/* ===== قفل كلمة السرّ ===== */
+#gate{position:fixed; inset:0; z-index:1000; background:radial-gradient(1200px 700px at 80% -10%, var(--bg2), var(--bg)) fixed, var(--bg); display:flex; align-items:center; justify-content:center; padding:24px}
+.gbox{background:linear-gradient(160deg,var(--surface2),var(--surface)); border:1px solid var(--line2); border-radius:18px; padding:32px 26px; max-width:340px; width:100%; text-align:center; box-shadow:0 18px 50px -22px rgba(0,0,0,.6)}
+.gbox .gicon{font-size:2.3rem}
+.gbox h2{margin:8px 0 2px; color:var(--accent)}
+.gbox p{color:var(--muted); font-size:.9rem; margin:0 0 18px}
+.gbox input{width:100%; background:var(--bg2); border:1px solid var(--line2); border-radius:11px; padding:13px 14px; color:var(--txt); font-family:inherit; font-size:1rem; text-align:center; margin-bottom:12px}
+.gbox button{width:100%; background:var(--accent); color:#04201c; border:none; border-radius:11px; padding:13px; font-weight:700; font-size:1rem; cursor:pointer; font-family:inherit}
+#gerr{color:var(--danger); font-size:.82rem; margin-top:12px}
 </style>
 </head>
 <body>
+<div id="gate">
+  <div class="gbox">
+    <div class="gicon">🔒</div>
+    <h2>إنقاذ</h2>
+    <p>أدخل كلمة السرّ للمتابعة</p>
+    <input id="gpass" type="password" inputmode="text" autocomplete="off" placeholder="كلمة السرّ" onkeydown="if(event.key==='Enter')tryUnlock()">
+    <button onclick="tryUnlock()">دخول</button>
+    <div id="gerr" style="display:none">كلمة سرّ غير صحيحة — حاول ثانية</div>
+  </div>
+</div>
 <header>
   <div class="hbar">
     <div class="brand"><span class="dot"></span><div>إنقاذ<small>بطاقات النجاة — سنة أولى جراحة</small></div></div>
@@ -251,6 +271,17 @@ footer{text-align:center; color:var(--faint); font-size:.72rem; padding:18px 0 6
 </div>
 
 <script>
+/* ===== قفل كلمة السرّ (ردع — المحتوى تعليميّ عامّ، لا حماية تشفيريّة) ===== */
+const GATE_HASH='e13d8f4eec5238a8ad3aa16f24039c70483698c26aa4417ef653d562539c124c';
+const GKEY='inqath_unlock_v1';
+async function sha(s){ const b=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); }
+async function tryUnlock(){
+  const inp=document.getElementById('gpass'), err=document.getElementById('gerr');
+  try{ const h=await sha(inp.value||''); if(h===GATE_HASH){ try{localStorage.setItem(GKEY,GATE_HASH);}catch(e){} document.getElementById('gate').style.display='none'; return; } }catch(e){}
+  err.style.display='block'; inp.value='';
+}
+(function gateInit(){ try{ if(localStorage.getItem(GKEY)===GATE_HASH){ const g=document.getElementById('gate'); if(g) g.style.display='none'; } }catch(e){} })();
+
 /* ============================================================
    مخطط البطاقة (لإضافة محتوى لاحقاً — Part 2..N):
    {
