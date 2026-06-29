@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="إنقاذ">
+<meta name="description" content="مساعد نجاة الطبيب المقيم — سنة أولى جراحة عامة">
+<meta name="theme-color" content="#0d1b2a">
+<title>إنقاذ · بطاقات النجاة الجراحية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================
+   إنقاذ — بطاقات النجاة للسنة الأولى (جراحة عامة)
+   ملف واحد مكتفٍ ذاتياً. يعمل دون إنترنت.
+   التصميم: "هدوء سريري" — slate/teal، الرقم هو البطل،
+   اللون الأحمر محجوز فقط للطوارئ المنعكسة.
+   =========================================================== */
+:root{
+  --bg:#0d1b2a; --bg2:#0a1623; --surface:#14253a; --surface2:#1b3149;
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --txt:#e9eef3; --muted:#9fb2c4; --faint:#6f8499;
+  --accent:#2dd4bf; --accent-dim:#1c8c80;
+  --danger:#ff6b6b; --amber:#f5b97f; --good:#7fd1a3;
+  --r:16px; --rs:11px;
+  --maxw:680px;
+}
+[data-theme="light"]{
+  --bg:#eef2f6; --bg2:#e4eaf0; --surface:#ffffff; --surface2:#f3f7fb;
+  --line:rgba(13,27,42,.10); --line2:rgba(13,27,42,.18);
+  --txt:#13283d; --muted:#516577; --faint:#7d8fa1;
+  --accent:#0f9d8e; --accent-dim:#0c7a6e; --danger:#d64545; --amber:#b9742f; --good:#2f8d5e;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0}
+body{
+  background:radial-gradient(1200px 700px at 80% -10%, var(--bg2), var(--bg)) fixed, var(--bg);
+  color:var(--txt);
+  font-family:'IBM Plex Sans Arabic','Tajawal',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;
+  line-height:1.7; min-height:100vh; padding-bottom:90px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 16px}
+.num{color:var(--accent); font-weight:700; font-feature-settings:"tnum" 1; letter-spacing:.2px}
+b,strong{font-weight:600}
+
+/* Header */
+header{
+  position:sticky; top:0; z-index:30; backdrop-filter:blur(12px);
+  background:linear-gradient(var(--bg), rgba(13,27,42,.65));
+  border-bottom:1px solid var(--line);
+}
+[data-theme="light"] header{background:linear-gradient(var(--bg), rgba(238,242,246,.7))}
+.hbar{max-width:var(--maxw); margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:12px}
+.brand{display:flex; align-items:center; gap:9px; font-weight:700; font-size:1.05rem}
+.dot{width:11px; height:11px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(45,212,191,.16)}
+.brand small{color:var(--faint); font-weight:400; font-size:.72rem; display:block; margin-top:-3px}
+.spacer{flex:1}
+.iconbtn{background:var(--surface); border:1px solid var(--line); color:var(--muted); width:38px; height:38px; border-radius:11px; cursor:pointer; font-size:1rem; display:grid; place-items:center; transition:.15s}
+.iconbtn:hover{color:var(--txt); border-color:var(--line2)}
+.duepill{background:var(--surface); border:1px solid var(--line); border-radius:11px; padding:6px 11px; font-size:.78rem; color:var(--muted); white-space:nowrap}
+.duepill b{color:var(--accent)}
+
+/* Disclaimer */
+.note{margin:14px 0; background:linear-gradient(135deg, rgba(245,185,127,.10), rgba(245,185,127,.03)); border:1px solid rgba(245,185,127,.28); border-radius:var(--rs); padding:11px 14px; font-size:.82rem; color:var(--amber); display:flex; gap:10px; align-items:flex-start}
+.note span{font-size:1rem; line-height:1.4}
+
+/* Tabs */
+.tabs{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0 16px}
+.tab{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 4px; text-align:center; cursor:pointer; transition:.15s; font-size:.8rem; color:var(--muted); font-weight:500}
+.tab .ti{display:block; font-size:1.1rem; margin-bottom:2px}
+.tab[aria-selected="true"]{background:linear-gradient(135deg,var(--surface2),var(--surface)); color:var(--txt); border-color:var(--accent-dim); box-shadow:0 0 0 1px var(--accent-dim) inset}
+.tab.emerg{border-color:rgba(255,107,107,.35); color:var(--danger)}
+.tab.emerg[aria-selected="true"]{border-color:var(--danger); box-shadow:0 0 0 1px var(--danger) inset; background:linear-gradient(135deg,rgba(255,107,107,.12),var(--surface))}
+
+/* Module chips */
+.chips{display:flex; gap:8px; overflow-x:auto; padding:2px 0 12px; scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto; background:var(--surface); border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:7px 14px; font-size:.8rem; cursor:pointer; transition:.15s; white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--accent); color:#04201c; border-color:var(--accent); font-weight:600}
+
+/* Card */
+.stage{perspective:1600px; margin:6px 0 18px}
+.card{position:relative; width:100%; min-height:340px; transition:transform .5s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; cursor:pointer}
+.card.flip{transform:rotateY(180deg)}
+.face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:linear-gradient(160deg,var(--surface2),var(--surface)); border:1px solid var(--line2); border-radius:var(--r); padding:26px 24px; display:flex; flex-direction:column; box-shadow:0 18px 50px -22px rgba(0,0,0,.6)}
+.face.back{transform:rotateY(180deg)}
+.card.danger .face{border-inline-start:4px solid var(--danger)}
+.tagrow{display:flex; gap:8px; align-items:center; margin-bottom:14px; flex-wrap:wrap}
+.tag{font-size:.68rem; padding:4px 9px; border-radius:999px; background:rgba(45,212,191,.12); color:var(--accent); border:1px solid rgba(45,212,191,.25); font-weight:600}
+.tag.red{background:rgba(255,107,107,.12); color:var(--danger); border-color:rgba(255,107,107,.3)}
+.qlabel{font-size:.72rem; color:var(--faint); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px}
+.front-q{font-size:1.4rem; font-weight:600; line-height:1.55; margin:auto 0}
+.back-a{font-size:1.12rem; line-height:1.8; margin:2px 0 auto}
+.back-a ul{margin:8px 0; padding-inline-start:20px}
+.back-a li{margin:4px 0}
+.fliphint{margin-top:16px; font-size:.74rem; color:var(--faint); text-align:center}
+.ref{margin-top:14px; font-size:.7rem; color:var(--faint); border-top:1px dashed var(--line); padding-top:10px}
+.ref b{color:var(--muted); font-weight:500}
+
+/* Rating */
+.rate{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px}
+.rb{border:1px solid var(--line2); background:var(--surface); color:var(--txt); border-radius:12px; padding:12px 4px; cursor:pointer; font-size:.84rem; font-weight:600; transition:.12s; text-align:center}
+.rb small{display:block; font-size:.66rem; color:var(--faint); font-weight:400; margin-top:1px}
+.rb:hover{transform:translateY(-1px)}
+.rb.again{border-color:rgba(255,107,107,.4)} .rb.again:hover{background:rgba(255,107,107,.12)}
+.rb.hard{border-color:rgba(245,185,127,.4)} .rb.hard:hover{background:rgba(245,185,127,.12)}
+.rb.good{border-color:rgba(45,212,191,.4)} .rb.good:hover{background:rgba(45,212,191,.12)}
+.rb.easy{border-color:rgba(127,209,163,.4)} .rb.easy:hover{background:rgba(127,209,163,.12)}
+
+/* Scenario */
+.scn{background:linear-gradient(160deg,var(--surface2),var(--surface)); border:1px solid var(--line2); border-radius:var(--r); padding:22px; box-shadow:0 18px 50px -22px rgba(0,0,0,.6)}
+.scn .vignette{font-size:1.05rem; line-height:1.75; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:16px}
+.step{border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:10px}
+.step .sq{font-weight:600; margin-bottom:0; cursor:pointer; display:flex; gap:8px; align-items:flex-start}
+.step .sq .n{color:var(--accent); font-weight:700; flex:0 0 auto}
+.step .sa{display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); color:var(--muted); line-height:1.8; font-size:.98rem}
+.step.open .sa{display:block}
+.step .reveal{font-size:.72rem; color:var(--faint); margin-top:6px}
+.step.open .reveal{display:none}
+
+/* Reference accordion */
+.acc{border:1px solid var(--line); border-radius:12px; margin-bottom:10px; overflow:hidden; background:var(--surface)}
+.acc-h{padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:600}
+.acc-h .cnt{margin-inline-start:auto; font-size:.72rem; color:var(--faint); font-weight:400}
+.acc-b{display:none; padding:0 16px 8px}
+.acc.open .acc-b{display:block}
+.refcard{border-top:1px solid var(--line); padding:12px 0}
+.refcard .rq{font-weight:600; font-size:.95rem; margin-bottom:5px}
+.refcard .ra{color:var(--muted); font-size:.92rem; line-height:1.75}
+.refcard .rs{font-size:.68rem; color:var(--faint); margin-top:6px}
+
+/* Empty / done */
+.empty{text-align:center; padding:46px 18px; color:var(--muted)}
+.empty .big{font-size:2.4rem; margin-bottom:8px}
+.empty h3{color:var(--txt); margin:0 0 6px}
+.btn{display:inline-block; background:var(--accent); color:#04201c; border:none; border-radius:12px; padding:11px 20px; font-size:.92rem; font-weight:600; cursor:pointer; font-family:inherit; margin-top:14px}
+.btn.ghost{background:transparent; color:var(--muted); border:1px solid var(--line2)}
+
+/* progress bar */
+.prog{height:5px; background:var(--surface); border-radius:99px; overflow:hidden; margin:0 0 16px}
+.prog>i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--good)); width:0; transition:width .3s}
+
+.title-sm{font-size:.82rem; color:var(--faint); margin:18px 0 8px; letter-spacing:.5px}
+footer{text-align:center; color:var(--faint); font-size:.72rem; padding:18px 0 6px}
+
+/* ===== الطوارئ ===== */
+.crisis-intro{background:linear-gradient(135deg,rgba(255,107,107,.12),rgba(255,107,107,.03)); border:1px solid rgba(255,107,107,.3); border-radius:var(--rs); padding:12px 14px; font-size:.86rem; margin:12px 0 14px}
+.crisis-intro b{color:var(--danger)}
+.cgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:14px}
+.ctile{background:linear-gradient(160deg,var(--surface2),var(--surface)); border:1px solid var(--line2); border-inline-start:4px solid var(--danger); border-radius:14px; padding:16px 14px; cursor:pointer; transition:.15s; text-align:start}
+.ctile:hover{transform:translateY(-2px); border-color:var(--danger)}
+.ctile .ci{font-size:1.7rem; display:block; margin-bottom:6px}
+.ctile .ct{font-weight:700; font-size:1rem}
+.ctile .cs{font-size:.72rem; color:var(--faint); margin-top:3px}
+.pblock{background:linear-gradient(160deg,var(--surface2),var(--surface)); border:1px solid var(--line2); border-inline-start:4px solid var(--danger); border-radius:14px; padding:16px 18px; margin-bottom:12px}
+.pblock .pq{font-weight:700; color:var(--danger); margin-bottom:8px; font-size:1.02rem}
+.pblock .pa{line-height:1.85; font-size:1.04rem}
+.backbtn{background:var(--surface); border:1px solid var(--line2); color:var(--txt); border-radius:11px; padding:9px 16px; cursor:pointer; font-family:inherit; font-weight:600; margin-bottom:14px; font-size:.9rem}
+.crisis-title{font-size:1.35rem; font-weight:700; margin:4px 0 14px; display:flex; align-items:center; gap:10px}
+
+/* ===== SBAR ===== */
+.sbar{background:var(--surface); border:1px solid var(--line2); border-radius:14px; padding:16px; margin-top:6px}
+.sbar h4{margin:0 0 4px; font-size:1rem}
+.sbar label{display:block; font-size:.8rem; color:var(--muted); margin:10px 0 4px; font-weight:600}
+.sbar textarea{width:100%; background:var(--bg2); border:1px solid var(--line2); border-radius:10px; padding:9px 11px; color:var(--txt); font-family:inherit; font-size:.92rem; resize:vertical; min-height:42px}
+.sbar pre{white-space:pre-wrap; background:var(--bg2); border:1px dashed var(--line2); border-radius:10px; padding:12px; margin-top:12px; font-family:inherit; font-size:.95rem; line-height:1.8; color:var(--txt)}
+
+/* ===== الخطة + الإحصاءات ===== */
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:6px 0 16px}
+.stat{background:linear-gradient(160deg,var(--surface2),var(--surface)); border:1px solid var(--line); border-radius:14px; padding:14px 10px; text-align:center}
+.stat .v{font-size:1.7rem; font-weight:700; color:var(--accent); font-feature-settings:"tnum" 1}
+.stat .l{font-size:.72rem; color:var(--faint); margin-top:2px}
+.today{background:linear-gradient(135deg,rgba(45,212,191,.12),rgba(45,212,191,.03)); border:1px solid var(--accent-dim); border-radius:16px; padding:18px; margin-bottom:16px}
+.today .tlabel{font-size:.74rem; color:var(--accent); letter-spacing:1px; font-weight:600}
+.today h3{margin:4px 0 10px; font-size:1.25rem}
+.today .focus{color:var(--muted); line-height:1.8; font-size:.95rem; margin-bottom:12px}
+.modgo{display:inline-flex; gap:6px; flex-wrap:wrap}
+.modgo button{background:var(--accent); color:#04201c; border:none; border-radius:10px; padding:8px 13px; font-size:.84rem; font-weight:600; cursor:pointer; font-family:inherit; margin:0 0 6px}
+.daylist{display:flex; flex-direction:column; gap:8px}
+.dayrow{display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:11px 14px; cursor:pointer; transition:.12s}
+.dayrow:hover{border-color:var(--line2)}
+.dayrow.cur{border-color:var(--accent-dim); box-shadow:0 0 0 1px var(--accent-dim) inset}
+.dayrow.done{opacity:.6}
+.dayrow .dn{width:30px; height:30px; flex:0 0 auto; border-radius:50%; background:var(--surface2); display:grid; place-items:center; font-weight:700; font-size:.85rem; color:var(--accent)}
+.dayrow.done .dn{background:var(--accent); color:#04201c}
+.dayrow .dt{font-weight:600; font-size:.92rem}
+.dayrow .dd{font-size:.72rem; color:var(--faint)}
+.datebar{display:flex; gap:8px; align-items:center; flex-wrap:wrap; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:.86rem}
+.datebar input{background:var(--bg2); border:1px solid var(--line2); border-radius:9px; padding:7px 10px; color:var(--txt); font-family:inherit}
+
+/* ===== البحث ===== */
+.searchbar{position:relative; margin:6px 0 12px}
+.searchbar input{width:100%; background:var(--surface); border:1px solid var(--line2); border-radius:12px; padding:11px 14px; color:var(--txt); font-family:inherit; font-size:.95rem}
+.mbadge{display:inline-block; font-size:.66rem; padding:2px 7px; border-radius:999px; background:rgba(45,212,191,.12); color:var(--accent); border:1px solid rgba(45,212,191,.25); margin-inline-end:6px}
+
+/* ===== لوحة القيادة اليوميّة ===== */
+.hello{margin:8px 0 4px; font-size:1.15rem; font-weight:700}
+.hello span{color:var(--accent)}
+.critbar{display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,rgba(255,107,107,.14),rgba(245,185,127,.06)); border:1px solid rgba(255,107,107,.32); border-radius:16px; padding:14px 16px; margin:14px 0; cursor:pointer; transition:.15s}
+.critbar:hover{transform:translateY(-1px); border-color:var(--danger)}
+.critbar .ce{font-size:1.7rem}
+.critbar .ctx{flex:1}
+.critbar .ctx b{display:block; color:var(--danger); font-size:1rem}
+.critbar .ctx small{color:var(--muted); font-size:.78rem}
+.critbar .cgo{color:var(--danger); font-weight:700; white-space:nowrap}
+.checklist{display:flex; flex-direction:column; gap:8px; margin-bottom:8px}
+.task{display:flex; align-items:center; gap:11px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:11px 13px; transition:.12s}
+.task.done{opacity:.55}
+.task .cb{width:24px; height:24px; flex:0 0 auto; border-radius:7px; border:2px solid var(--line2); display:grid; place-items:center; cursor:pointer; font-size:.85rem; color:transparent}
+.task.done .cb{background:var(--accent); border-color:var(--accent); color:#04201c}
+.task .tx{flex:1; cursor:pointer; font-size:.93rem}
+.task.done .tx{text-decoration:line-through}
+.task .ti2{font-size:1.05rem; flex:0 0 auto}
+.task .arrow{color:var(--faint); font-size:.8rem}
+.daydone{font-size:.8rem; color:var(--good); margin-top:4px}
+.vnote{margin-top:10px; font-size:.74rem; color:var(--amber); background:rgba(245,185,127,.08); border:1px solid rgba(245,185,127,.3); border-radius:9px; padding:7px 10px; line-height:1.6}
+.tnote{margin-top:10px; font-size:.82rem; color:var(--good); background:rgba(127,209,163,.09); border:1px solid rgba(127,209,163,.3); border-radius:9px; padding:8px 11px; line-height:1.7}
+
+@media (prefers-reduced-motion: reduce){ .card{transition:none} .rb:hover{transform:none} .ctile:hover{transform:none} .critbar:hover{transform:none} }
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="brand"><span class="dot"></span><div>إنقاذ<small>بطاقات النجاة — سنة أولى جراحة</small></div></div>
+    <div class="spacer"></div>
+    <div class="duepill" id="duepill">مستحقّ: <b>0</b></div>
+    <button class="iconbtn" id="themeBtn" title="الوضع">◐</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="note"><span>⚠︎</span><div>قيم وجرعات مرجعية للحفظ السريع، مُتحقَّق منها من مصادر موثوقة. <b>بروتوكول قسمك ومستشفاك والأخصائي يعلو على أي شيء هنا.</b> هذه أداة تدريب، لا بديل عن الإشراف.</div></div>
+
+  <div class="tabs" role="tablist">
+    <div class="tab emerg" data-mode="emergency" role="tab" aria-selected="false"><span class="ti">🚨</span>طوارئ</div>
+    <div class="tab" data-mode="plan" role="tab" aria-selected="true"><span class="ti">🗓️</span>الخطة</div>
+    <div class="tab" data-mode="review" role="tab" aria-selected="false"><span class="ti">🔁</span>مراجعة</div>
+    <div class="tab" data-mode="scenarios" role="tab" aria-selected="false"><span class="ti">🩺</span>حالات</div>
+    <div class="tab" data-mode="quiz" role="tab" aria-selected="false"><span class="ti">⚡</span>اختبار</div>
+    <div class="tab" data-mode="ref" role="tab" aria-selected="false"><span class="ti">📊</span>مرجع</div>
+  </div>
+
+  <div id="chips" class="chips"></div>
+  <div id="app"></div>
+  <footer>إنقاذ · مساعد نجاة المقيم · 🚨 طوارئ + 🗓️ خطة 14 يوم + 🔁 تكرار متباعد · يُحفظ تقدّمك على هذا الجهاز</footer>
+</div>
+
+<script>
+/* ============================================================
+   مخطط البطاقة (لإضافة محتوى لاحقاً — Part 2..N):
+   {
+     id:'A1', mod:'A', type:'fact'|'scenario', danger:true|false,
+     front:'السؤال', back:'الجواب (يسمح HTML)', ref:'المصدر',
+     steps:[{q:'سؤال الخطوة', a:'النموذج'}]   // للحالات فقط
+   }
+   لإضافة محتوى: ألحِق كائنات جديدة بمصفوفة CARDS، وأضِف الوحدة في MODULES.
+   ============================================================ */
+
+const MODULES = [
+  {id:'all', name:'الكل'},
+  {id:'A', name:'التقييم والتصعيد'},
+  {id:'B', name:'توقف القلب (ACLS)', danger:true},
+  {id:'C', name:'الإنتان'},
+  {id:'D', name:'التأق', danger:true},
+  {id:'E', name:'الشوارد الطارئة', danger:true},
+  {id:'F', name:'أرقام وأدوية حرجة'},
+  {id:'G', name:'ممنوع أن تفوّتها'},
+  {id:'H', name:'البطن الحاد'},
+  {id:'I', name:'الانسداد والنزف والفتوق'},
+  {id:'J', name:'الرضوح (ATLS)', danger:true},
+  {id:'K', name:'المهارات العملية'},
+  {id:'L', name:'صندوق أدوات القسم'},
+  {id:'M', name:'التوثيق والتسليم'},
+  {id:'N', name:'الدور والفريق والتصعيد', danger:true},
+  {id:'O', name:'الأدوات والخيوط والخياطة'},
+  {id:'P', name:'الحروق', danger:true},
+  {id:'Q', name:'الأدوية الأساسية'},
+];
+
+/* ====================== الطوارئ (وصول فوريّ للبروتوكول) ======================
+   تشير لبطاقات CARDS الموثّقة الموجودة — مصدر واحد، لا تكرار. */
+const CRISES = [
+  {id:'deteriorate', icon:'📉', title:'مريض متدهور + تصعيد', sub:'ابدأ هنا لأي مريض «متعب»', cards:['A1','A2','A5','A6','A4'], scen:'AS1', sbar:true},
+  {id:'arrest', icon:'💔', title:'توقف القلب (ACLS)', sub:'كود أزرق', cards:['B1','B2','B3','B4','B5','B6','B7','B8'], scen:'BS1'},
+  {id:'anaphylaxis', icon:'🐝', title:'تأقّ (Anaphylaxis)', sub:'أدرينالين 0.5 مغ عضليّ', cards:['D1','D2','D3','D5','D4'], scen:'DS1'},
+  {id:'sepsis', icon:'🦠', title:'إنتان (Sepsis Six)', sub:'صادّ خلال ساعة', cards:['C1','C2','C3','C4','C5','C6'], scen:'CS1'},
+  {id:'hyperk', icon:'⚡', title:'فرط البوتاسيوم', sub:'احمِ القلب أولاً', cards:['E1','E2','E3','E4','E5'], scen:'ES1'},
+  {id:'haemorrhage', icon:'🩸', title:'نزف هائل / صدمة', sub:'xABCDE · 1:1:1 · TXA', cards:['J1','J2','J3','F4','F5','F6','F12'], scen:'JS1'},
+  {id:'tension', icon:'🫁', title:'استرواح صدريّ ضاغط', sub:'تشخيص سريريّ — لا تنتظر الأشعة', cards:['G9'], scen:null},
+  {id:'postop', icon:'🛌', title:'تدهور ما بعد العملية', sub:'تسرّع القلب = إنذار', cards:['G1','G10','A1'], scen:null},
+  {id:'last', icon:'💉', title:'سُمّية مخدّر موضعيّ (LAST)', sub:'Intralipid 20%', cards:['F9','K5'], scen:null},
+  {id:'dka', icon:'🍬', title:'حُماض كيتونيّ سكّريّ (DKA)', sub:'سوائل ثم إنسولين + بوتاسيوم', cards:['L4'], scen:'LS1'},
+];
+
+/* ====================== خطة الـ14 يوماً (تربط كل يوم بوحداته) ====================== */
+const PLAN = [
+  {d:1, t:'التقييم والتصعيد + دورك في الفريق', mods:['A','N'], reflex:true, focus:'أهمّ يوم: نظام ABCDE لأي مريض متدهور + دورك (تعرّف/أنعش/صعّد) + متى وكيف تتصل (SBAR/CUS/PACE) + العمل مع التمريض والتخصصات. هذا نصف نجاتك.', hands:'مثّل ABCDE بصوت عالٍ على زميل، وتدرّب على جملة CUS: «أنا قلِق… مسألة سلامة… تعال الآن».'},
+  {d:2, t:'الصدمة والسوائل ونقل الدم', mods:['F'], reflex:true, focus:'ميّز نوع الصدمة، واحسب السوائل (لا إغراق ولا تجفيف). عتبة نقل الدم Hb 70.', hands:'احسب صيانة سوائل لمريض 70 كغ ذهنياً.'},
+  {d:3, t:'توقف القلب (ACLS)', mods:['B'], reflex:true, focus:'خوارزمية قابل/غير قابل للصدم حتى تصير تلقائية. 4H/4T.', hands:'ارسم الخوارزمية من ذاكرتك على ورقة بيضاء.'},
+  {d:4, t:'الإنتان (Sepsis)', mods:['C'], reflex:true, focus:'تعرّف مبكّر (qSOFA) + حزمة الساعة الأولى. source control.', hands:'احفظ Sepsis Six بأصابع يدك.'},
+  {d:5, t:'التأقّ والمجرى والأكسجين', mods:['D'], reflex:true, focus:'أدرينالين 0.5 مغ عضليّ (لا تخلطه بالوريديّ في التوقف).', hands:'تدرّب على مناورات المجرى وbag-mask على دمية بمركزك.'},
+  {d:6, t:'طوارئ ما بعد العملية + VTE', mods:['G'], reflex:true, focus:'تسرّع القلب بعد العملية = نزف/PE/إنتان حتى يثبت العكس. 5 Ws.', hands:'اكتب خطواتك الخمس عند نداء «تسرّع بعد عملية».'},
+  {d:7, t:'تثبيت الأسبوع الأول + راحة', mods:['A','B','C','D'], reflex:false, focus:'يوم خفيف عمداً: راجع المستحقّ، شغّل كل الحالات، ثم نَم باكراً. الراحة جزء من الخطة.', hands:'اختبر نفسك: ارسم ACLS وSepsis Six وجرعة التأق غيباً.'},
+  {d:8, t:'البطن الحاد', mods:['H'], reflex:false, focus:'خبزك اليوميّ: نهج منظّم + «ممنوع أن تفوّتها». معايير البنكرياس والأقنية.', hands:'تدرّب على فحص بطن منظّم على زميل.'},
+  {d:9, t:'الانسداد والنزف الهضميّ والفتوق', mods:['I'], reflex:false, focus:'ميّز المختنق/النازف. drip & suck. الفتق المختنق = طارئ.', hands:'راجع الفرق بين فتق غير قابل للردّ مزمن ومختنق طارئ.'},
+  {d:10, t:'الرضوح (ATLS 11) + الحروق', mods:['J','P'], reflex:true, focus:'xABCDE وأرقام الرضوح (1:1:1، TXA) + الحروق (المجرى أولاً، Parkland، قاعدة التسعات، التحويل).', hands:'امشِ xABCDE بصوت عالٍ. احفظ Parkland واحسبه لمريض 70 كغ/30%. سجّل في دورة ATLS مبكّراً.'},
+  {d:11, t:'المهارات + الأدوات والخيوط', mods:['K','O'], reflex:false, focus:'ألّا تتجمّد عند أول إجراء: العقد، الخياطة، LA، NG، القسطرة + تسمية الأدوات واختيار الخيط والإبرة وتقنيات الخياطة.', hands:'اشترِ طقم خياطة وتدرّب على العقدة المربّعة والغرزة المنفصلة على رباط حذاء/وسادة.'},
+  {d:12, t:'صندوق الأدوات + الأدوية الأساسية', mods:['L','E','Q'], reflex:true, focus:'فرط البوتاسيوم، المسكّنات، DKA، نقل الدم + الوقاية من الخثار، عكس المُمَيَّعات، الصادّات، وسلامة الدواء (التحسّس/الكلية/عالية الخطورة).', hands:'احفظ جرعة الوقاية من الخثار وثلاثيّة فرط البوتاسيوم وقاعدة «لا KCl دفعةً وريديّة».'},
+  {d:13, t:'التوثيق والتسليم والموافقة', mods:['M'], reflex:false, focus:'ما يحميك قانونياً: SBAR handover، التوثيق، حدود الموافقة، SPIKES.', hands:'جهّز قالب تسليم على هاتفك.'},
+  {d:14, t:'التثبيت النهائيّ + بطاقة الجيب', mods:['F','G'], reflex:true, focus:'راجع كل المنعكسات، وتدرّب على وضع «الطوارئ»، وابنِ بطاقة جيبك. نَم واهدأ.', hands:'شغّل وضع الطوارئ ومرّ على كل أزمة مرّة.'},
+];
+/* فيديو اليوم الموصى به (مصادر موثّقة — راجع SOURCES.md) */
+const VID = {
+  1:'Geeky Medics — ABCDE Assessment', 2:'Strong Medicine — Approach to Shock',
+  3:'Resuscitation Council UK — Adult ALS Algorithm', 4:'Osmosis — Sepsis',
+  5:'Resuscitation Council UK — Anaphylaxis Algorithm', 6:'Armando Hasudungan — Postoperative Complications',
+  7:'', 8:'Geeky Medics — Abdominal Examination', 9:'Zero To Finals — Bowel Obstruction',
+  10:'ATLS — Primary Survey (xABCDE)', 11:'Med School Insiders — Surgical Knot Tying',
+  12:'ICU Advantage — Hyperkalemia', 13:'Geeky Medics — SBAR Handover', 14:'',
+};
+
+const CARDS = [
+/* ===== A — التقييم والتصعيد ===== */
+{id:'A1',mod:'A',type:'fact',front:'ما منهج ABCDE، وما قاعدته الذهبية؟',back:'<b>A</b> Airway · <b>B</b> Breathing · <b>C</b> Circulation · <b>D</b> Disability · <b>E</b> Exposure.<br>القاعدة: <b>عالِج مشكلة كل حرف قبل الانتقال للذي يليه</b>، وأعِد التقييم من البداية عند أي تدهور.',ref:'ATLS / Resuscitation Council UK'},
+{id:'A2',mod:'A',type:'fact',front:'في خطوة Disability، ما الذي يجب ألا تنساه أبداً؟',back:'<b>سكّر الدم</b> (DEFG = Don\'t Ever Forget Glucose) + تقييم الوعي (GCS أو AVPU) + فحص الحدقتين.',ref:'ATLS'},
+{id:'A3',mod:'A',type:'fact',front:'ما مكوّنات مقياس غلاسكو (GCS) وحدوده؟',back:'العين <span class="num">E4</span> · اللفظي <span class="num">V5</span> · الحركي <span class="num">M6</span>.<br>الأدنى <span class="num">3</span>، الأعلى <span class="num">15</span>. <b>GCS ≤ 8 = مجرى هوائي مهدّد</b> → استدعِ التخدير.',ref:'ATLS / Teasdale GCS'},
+{id:'A4',mod:'A',type:'fact',front:'ما قالب SBAR للتصعيد والاتصال بالأقدم؟',back:'<b>S</b>ituation (الموقف) · <b>B</b>ackground (الخلفية) · <b>A</b>ssessment (تقييمك + "أنا قلق") · <b>R</b>ecommendation/Request (طلبك: "تعال تراه الآن").',ref:'NHS / IHI SBAR'},
+{id:'A5',mod:'A',type:'fact',front:'ما العلامات الحيوية التي تستدعي تحرّكاً وتصعيداً فورياً؟',back:'RR <span class="num">&lt;8</span> أو <span class="num">&gt;25</span> · SpO₂ <span class="num">&lt;92%</span> · SBP <span class="num">&lt;90</span> · HR <span class="num">&lt;40</span> أو <span class="num">&gt;130</span> · تدنّي وعي جديد · قلة بول.',ref:'NEWS2 (RCP)'},
+{id:'A6',mod:'A',type:'fact',front:'متى تتصل بالأخصائي/الـ registrar؟',back:'• أي خلل ABCDE لا يتحسّن بإجرائك الأولي.<br>• أي علامة "ممنوع أن تفوّتها".<br>• حدسك قلِق رغم أرقام مقبولة.<br>• إجراء يتجاوز صلاحيتك.<br>• <b>لا تعرف ماذا تفعل</b> (سبب كافٍ ومشرّف).',ref:'مبدأ السلامة'},
+{id:'AS1',mod:'A',type:'scenario',front:'مريض بعد عملية بطن يبدو متعباً ومشوّشاً قليلاً.',back:'',ref:'تطبيق ABCDE',steps:[
+  {q:'العلامات: RR 28، SpO₂ 90%، HR 122، BP 92/58. ما إطار تعاملك؟',a:'ابدأ <b>ABCDE</b> فوراً — مريض غير مستقر، لا تعالج عرضاً منفرداً.'},
+  {q:'A و B؟',a:'تأكد من سلامة المجرى (يتكلم؟)، وأعطِ <b>أكسجين عالي التدفّق</b> (non-rebreather 15 ل/د) لرفع SpO₂.'},
+  {q:'C؟',a:'<b>خطّان وريديان كبيران (16–18G)</b>، اسحب دم + cross-match + lactate، وأعطِ <b>bolus بلّورية 250–500 مل</b> ثم أعِد التقييم. فكّر بالنزف أولاً (افحص الجرح/المصارف).'},
+  {q:'الخطوة الحاسمة؟',a:'<b>صعّد الآن عبر SBAR</b> — تسرّع قلب + هبوط ضغط + تشوّش بعد عملية = نزف/إنتان/PE حتى يثبت العكس. لا تنتظر.'},
+]},
+
+/* ===== B — توقف القلب (ACLS) ===== */
+{id:'B1',mod:'B',type:'fact',danger:true,front:'مواصفات الضغطات الصدرية في الإنعاش؟',back:'معدّل <span class="num">100–120</span>/د · عمق <span class="num">5–6</span> سم · نسبة <span class="num">30:2</span> · بدّل الضاغط كل <span class="num">دقيقتين</span> · قلّل الانقطاعات.',ref:'Resuscitation Council UK 2025'},
+{id:'B2',mod:'B',type:'fact',danger:true,front:'إيقاع قابل للصدم (VF/pVT): متى تعطي الأدرينالين والأميودارون؟',back:'<b>Adrenaline 1 mg IV</b> بعد الصدمة الثالثة، ثم كل <span class="num">3–5</span> د.<br><b>Amiodarone 300 mg IV</b> بعد <span class="num">3</span> صدمات، ثم <b>150 mg</b> بعد <span class="num">5</span> صدمات.',ref:'Resuscitation Council UK / ERC 2025'},
+{id:'B3',mod:'B',type:'fact',danger:true,front:'إيقاع غير قابل للصدم (PEA/Asystole)؟',back:'CPR مستمر + <b>Adrenaline 1 mg IV فوراً</b> ثم كل <span class="num">3–5</span> د. <b>لا توجد صدمة.</b>',ref:'Resuscitation Council UK 2025'},
+{id:'B4',mod:'B',type:'fact',danger:true,front:'طاقة الصدمة الأولى (biphasic)؟',back:'<span class="num">≥150 J</span> للموجة ثنائية الطور (<span class="num">130–150 J</span> للنبضي)، ثم زِد الطاقة في الصدمات التالية إن أمكن.',ref:'ERC 2025'},
+{id:'B5',mod:'B',type:'fact',danger:true,front:'الأسباب القابلة للعكس (4H / 4T)؟',back:'<b>4H:</b> Hypoxia · Hypovolaemia · Hypo/Hyperkalaemia واضطراب أيضي · Hypothermia.<br><b>4T:</b> Tension pneumothorax · Tamponade · Toxins · Thrombosis (PE/MI).',ref:'Resuscitation Council UK'},
+{id:'B6',mod:'B',type:'fact',danger:true,front:'بطء قلب غير مستقر (مع علامات خطر)؟',back:'<b>Atropine 500 mcg IV</b>، كرّر كل 3–5 د حتى <span class="num">3 mg</span> كحدّ أقصى. إن لم يستجب → <b>pacing</b> (أو أدوية خط ثانٍ).',ref:'Resuscitation Council UK 2025'},
+{id:'B7',mod:'B',type:'fact',danger:true,front:'تسرّع قلب غير مستقر؟',back:'<b>تقويم نظم متزامن (synchronized cardioversion)</b> فوراً (مع تخدير/تركين إن أمكن).',ref:'Resuscitation Council UK'},
+{id:'B8',mod:'B',type:'fact',danger:true,front:'بديل الأميودارون إن لم يتوفّر؟',back:'<b>Lidocaine 100 mg IV</b>، مع إمكان جرعة إضافية <b>50 mg</b> بعد 5 صدمات.',ref:'Resuscitation Council UK / ERC 2025'},
+{id:'BS1',mod:'B',type:'scenario',danger:true,front:'مريض فقد الوعي فجأة في الجناح.',back:'',ref:'خوارزمية ALS — Resus UK 2025',steps:[
+  {q:'أول خطواتك؟',a:'تأكد من السلامة، افحص الاستجابة والتنفّس، <b>نادِ فريق الإنعاش</b>، ابدأ <b>CPR 30:2</b> وصِل المزيل فوراً.'},
+  {q:'المونيتور يُظهر VF. ماذا تفعل؟',a:'<b>صدمة (≥150 J)</b> ثم استأنف CPR دقيقتين مباشرة دون فحص نبض.'},
+  {q:'بقي في VF بعد الصدمة الثالثة؟',a:'أعطِ <b>Adrenaline 1 mg IV + Amiodarone 300 mg IV</b>، واصل دورات الصدمة/CPR، وكرّر الأدرينالين كل 3–5 د.'},
+  {q:'ماذا تعالج بالتوازي؟',a:'<b>4H/4T</b> — صحّح نقص الأكسجين/الحجم/البوتاسيوم، استبعد استرواحاً ضاغطاً أو انصباباً تامورياً.'},
+]},
+
+/* ===== C — الإنتان ===== */
+{id:'C1',mod:'C',type:'fact',front:'ما معيار qSOFA السريع للإنتان؟',back:'<b>RR ≥ 22</b> · <b>SBP ≤ 100</b> · <b>تغيّر الوعي</b>. وجود <span class="num">≥2</span> = خطر مرتفع. (استعمل NEWS2 أيضاً كمنبّه.)',ref:'Sepsis-3 / Surviving Sepsis'},
+{id:'C2',mod:'C',type:'fact',front:'ما حزمة الساعة الأولى (Sepsis Six)؟',back:'1) زروعات دم <b>قبل</b> الصادّات · 2) <b>صادّ واسع الطيف خلال ساعة</b> · 3) قياس <b>Lactate</b> · 4) سوائل · 5) قياس البول · 6) أكسجين.',ref:'Surviving Sepsis Campaign 2021'},
+{id:'C3',mod:'C',type:'fact',front:'جرعة السوائل في الإنتان مع نقص التروية/هبوط الضغط؟',back:'<b>30 مل/كغ</b> بلّورية متوازنة خلال أول <span class="num">3</span> ساعات، ثم أعِد التقييم بتكرار.',ref:'Surviving Sepsis Campaign 2021'},
+{id:'C4',mod:'C',type:'fact',front:'أهداف الإنعاش في الإنتان؟',back:'<b>MAP ≥ 65</b> · تحسّن <b>Lactate</b> · بول <span class="num">≥0.5</span> مل/كغ/سا.',ref:'Surviving Sepsis Campaign'},
+{id:'C5',mod:'C',type:'fact',front:'دلالة قيم Lactate؟',back:'<span class="num">&gt;2</span> mmol/L مقلق (نقص تروية) · <span class="num">&gt;4</span> mmol/L خطير (إنذار سيّئ).',ref:'Surviving Sepsis Campaign'},
+{id:'C6',mod:'C',type:'fact',front:'ما المبدأ الأهم بعد الصادّ في الإنتان الجراحي؟',back:'<b>السيطرة على المصدر (source control)</b> — تصريف خرّاج / إزالة قسطرة ملوّثة / جراحة. الصادّ وحده لا يكفي.',ref:'Surviving Sepsis Campaign'},
+{id:'CS1',mod:'C',type:'scenario',front:'مريض في اليوم الثالث بعد استئصال قولون: HR 118، BP 95/60، حرارة 38.7، مشوّش، بول قليل.',back:'',ref:'حزمة الساعة الأولى',steps:[
+  {q:'تشخيصك العامل؟',a:'<b>إنتان</b> (غالباً مصدر داخل بطني/تسريب مفاغرة) — ابدأ ABCDE.'},
+  {q:'ماذا تفعل في أول ساعة؟',a:'<b>Sepsis Six:</b> زروعات قبل الصادّ، <b>صادّ واسع خلال ساعة</b>، lactate، <b>سوائل 30 مل/كغ</b>، قياس بول، أكسجين.'},
+  {q:'الخطوة الجراحية الجوهرية؟',a:'<b>صعّد للأخصائي</b> وفكّر بـ <b>source control</b> (تصوير CT ± إعادة استكشاف). تسرّع + حمّى + تشوّش يوم 3–7 = تسريب مفاغرة حتى يثبت العكس.'},
+]},
+
+/* ===== D — التأق ===== */
+{id:'D1',mod:'D',type:'fact',danger:true,front:'كيف تشخّص التأق سريرياً؟',back:'بدء <b>سريع</b> + مشكلة في <b>A</b> و/أو <b>B</b> و/أو <b>C</b>، وغالباً تغيّرات جلدية/مخاطية (احمرار، شرى، وذمة وعائية). تشخيص سريري — لا تنتظر التأكيد.',ref:'Resuscitation Council UK 2021'},
+{id:'D2',mod:'D',type:'fact',danger:true,front:'جرعة وطريق الأدرينالين في التأق للبالغ؟',back:'<b>0.5 mg IM</b> (= <span class="num">500</span> mcg = <span class="num">0.5</span> مل من 1:1000) في منتصف الفخذ الخارجي. <b>عضلياً لا وريدياً</b> (الوريدي للأخصائيين فقط).',ref:'Resuscitation Council UK 2021'},
+{id:'D3',mod:'D',type:'fact',danger:true,front:'متى تكرّر جرعة الأدرينالين؟',back:'كل <span class="num">5</span> دقائق إن لم تتحسّن أعراض التأق.',ref:'Resuscitation Council UK 2021'},
+{id:'D4',mod:'D',type:'fact',danger:true,front:'ما دور مضادات الهيستامين والستيرويدات؟',back:'<b>ليست خط أول، ولا تُقدَّم على الأدرينالين والسوائل.</b> الأدرينالين العضلي هو العلاج المنقذ. (التحديث ألغى أولويتها.)',ref:'Resuscitation Council UK 2021'},
+{id:'D5',mod:'D',type:'fact',danger:true,front:'جرعة السوائل ووضعية المريض في التأق؟',back:'bolus بلّورية <span class="num">500–1000</span> مل (قد تتكرر). الوضعية: <b>مستلقٍ مع رفع الأرجل</b> — <b>منع الوقوف/الجلوس المفاجئ</b> (قد يسبّب الموت).',ref:'Resuscitation Council UK 2021'},
+{id:'DS1',mod:'D',type:'scenario',danger:true,front:'بعد دقائق من بدء صادّ وريدي: طفح منتشر، صرير، تورّم شفتين، BP 80/50.',back:'',ref:'خوارزمية التأق — Resus UK 2021',steps:[
+  {q:'خطوتك الأولى فوراً؟',a:'<b>Adrenaline 0.5 mg IM</b> (0.5 مل 1:1000) — أولاً وقبل أي شيء. أوقف الصادّ، نادِ المساعدة.'},
+  {q:'ثم؟',a:'أكسجين عالي، <b>سوائل 500–1000 مل</b>، استلقِ مع رفع الأرجل.'},
+  {q:'لم تتحسّن بعد 5 دقائق؟',a:'<b>كرّر الأدرينالين العضلي</b>. مضادات الهيستامين/الستيرويد <b>ليست</b> الأولوية.'},
+]},
+
+/* ===== E — الشوارد الطارئة ===== */
+{id:'E1',mod:'E',type:'fact',danger:true,front:'تغيّرات ECG في فرط البوتاسيوم بالترتيب؟',back:'موجات <b>T مدبّبة</b> → <b>اتساع QRS</b> → اختفاء موجة <b>P</b> → نمط <b>sine-wave</b> → توقف القلب.',ref:'UK Kidney Association 2023'},
+{id:'E2',mod:'E',type:'fact',danger:true,front:'حماية القلب في فرط البوتاسيوم؟',back:'<b>Calcium gluconate 10% — 10 مل IV</b> ببطء مع مراقبة قلبية؛ كرّر إن استمرّت تغيّرات ECG. (يحمي ولا يخفّض البوتاسيوم.)',ref:'UK Kidney Association 2023'},
+{id:'E3',mod:'E',type:'fact',danger:true,front:'كيف تنقل البوتاسيوم داخل الخلايا؟',back:'<b>Insulin (soluble) 10 وحدات + 25 غ جلوكوز IV</b> (مثلاً 50 مل 50% أو 125 مل 20%). <b>راقب سكّر الدم</b> (خطر هبوط متأخّر).',ref:'UK Kidney Association 2023'},
+{id:'E4',mod:'E',type:'fact',danger:true,front:'العلاج المساعد لخفض البوتاسيوم؟',back:'<b>Salbutamol مبخّر 10–20 مغ</b> (لا يُستعمل كعلاج وحيد — بعض المرضى لا يستجيبون).',ref:'UK Kidney Association 2023'},
+{id:'E5',mod:'E',type:'fact',danger:true,front:'تصنيف شدّة فرط البوتاسيوم؟',back:'معتدل <span class="num">6.0–6.4</span> mmol/L · شديد <span class="num">≥6.5</span> mmol/L (أو أي تغيّرات ECG/أعراض).',ref:'UK Kidney Association 2023'},
+{id:'E6',mod:'E',type:'fact',front:'التعويض الآمن لنقص البوتاسيوم محيطياً؟',back:'بحدّ أقصى <span class="num">10</span> mmol/سا، وتركيز <span class="num">≤40</span> mmol/L في الوريد المحيطي. أعلى من ذلك → خط مركزي + مراقبة.',ref:'BNF / معايير المستشفى'},
+{id:'ES1',mod:'E',type:'scenario',danger:true,front:'مريض فشل كلوي مزمن: K⁺ 7.1، ECG يُظهر QRS عريضاً.',back:'',ref:'UK Kidney Association 2023',steps:[
+  {q:'أول خطوة (الأهم)؟',a:'<b>Calcium gluconate 10% 10 مل IV</b> فوراً لحماية القلب — وجود تغيّرات ECG = طارئ.'},
+  {q:'ثم لخفض البوتاسيوم؟',a:'<b>Insulin 10 وحدات + 25 غ جلوكوز IV</b> ± <b>Salbutamol مبخّر</b>. راقب سكّر الدم.'},
+  {q:'العلاج الحاسم؟',a:'<b>صعّد لطبيب الكلى</b> — هذه إجراءات مؤقّتة؛ قد يلزم <b>غسيل كلوي</b>. عالج السبب.'},
+]},
+
+/* ===== F — أرقام وأدوية حرجة ===== */
+{id:'F1',mod:'F',type:'fact',front:'عتبة نقل كريات الدم الحمراء؟',back:'<b>Hb &lt; 70</b> g/L (أو <span class="num">&lt;80</span> إن مرض قلبي/مريض حرج). الوحدة الواحدة ترفع Hb بنحو <span class="num">10</span> g/L.',ref:'Restrictive transfusion (NICE/TRICC)'},
+{id:'F2',mod:'F',type:'fact',front:'حسبة سوائل الصيانة اليومية؟',back:'ماء <span class="num">25–30</span> مل/كغ/يوم + Na⁺/K⁺ ~<span class="num">1</span> mmol/كغ + جلوكوز <span class="num">50–100</span> غ/يوم.',ref:'NICE CG174'},
+{id:'F3',mod:'F',type:'fact',front:'جرعة bolus الإنعاش العام (غير الرضحي)؟',back:'<span class="num">250–500</span> مل بلّورية متوازنة، ثم <b>أعِد التقييم</b> (لا تصبّ بلا تقييم).',ref:'NICE / Surviving Sepsis'},
+{id:'F4',mod:'F',type:'fact',front:'سوائل الرضوح في ATLS 11 (2025)؟',back:'<b>≤1 لتر</b> بلّورية ثم <b>دم</b>، مع <b>permissive hypotension</b> حتى السيطرة على النزف. قلّل البلّوريات.',ref:'ATLS 11th ed. 2025'},
+{id:'F5',mod:'F',type:'fact',front:'نسبة بروتوكول النقل الكتلي (MTP)؟',back:'<b>1:1:1</b> (كريات : بلازما : صفائح) — المعيار الذهبي في الصدمة النزفية.',ref:'ATLS 11th ed. 2025'},
+{id:'F6',mod:'F',type:'fact',front:'جرعة TXA في الرضوح؟',back:'<b>1 غ خلال 10 د ثم 1 غ خلال 8 سا</b>، إن أُعطي <b>خلال 3 ساعات</b> من الإصابة. (<b>2 غ</b> bolus في إصابة الدماغ TBI.)',ref:'ATLS 11 / CRASH-2 / CRASH-3'},
+{id:'F7',mod:'F',type:'fact',front:'الجرعة القصوى للباراسيتامول؟',back:'<b>1 غ كل 6 ساعات</b>، أقصى <span class="num">4</span> غ/يوم. خفّضها إن الوزن <span class="num">&lt;50</span> كغ أو خلل كبدي.',ref:'BNF'},
+{id:'F8',mod:'F',type:'fact',front:'الجرعات القصوى للمخدّر الموضعي؟',back:'<b>Lidocaine 3 مغ/كغ</b> (<span class="num">7</span> مغ/كغ مع أدرينالين) · <b>Bupivacaine 2 مغ/كغ</b>.<br>تذكير: محلول <b>1% = 10 مغ/مل</b>. (بعض المراجع: ليدوكايين سادة حتى 4.5 — اتبع صيدلية مستشفاك.)',ref:'BNF / AAGBI'},
+{id:'F9',mod:'F',type:'fact',danger:true,front:'علاج سُمّية المخدّر الموضعي (LAST)؟',back:'أوقف الحقن فوراً · ABC + أكسجين 100% · عالج التشنّج (بنزوديازيبين) · <b>Intralipid 20%</b> · إنعاش مطوّل قد يلزم.',ref:'AAGBI LAST guideline'},
+{id:'F10',mod:'F',type:'fact',front:'هدف معدّل إخراج البول؟',back:'<span class="num">≥0.5</span> مل/كغ/سا. أقل من ذلك = نقص تروية/جفاف/انسداد قسطرة حتى يثبت العكس.',ref:'مبادئ الإنعاش'},
+{id:'F11',mod:'F',type:'fact',front:'كيف تحسب الضغط الشرياني الوسطي (MAP)؟',back:'<b>MAP = (SBP + 2×DBP) ÷ 3</b>. الهدف عموماً <b>≥65</b> mmHg لتروية الأعضاء.',ref:'فسلجة سريرية'},
+{id:'F12',mod:'F',type:'fact',front:'درجات النزف الأربع (ATLS)؟',back:'<b>I</b> &lt;15% (شبه طبيعي) · <b>II</b> 15–30% (تسرّع + ضغط نبض ضيّق) · <b>III</b> 30–40% (+ هبوط ضغط + تشوّش) · <b>IV</b> &gt;40% (مهدّد للحياة).',ref:'ATLS'},
+
+/* ===== G — ممنوع أن تفوّتها ===== */
+{id:'G1',mod:'G',type:'fact',danger:true,front:'تسرّع قلب جديد بعد العملية — كيف تفسّره؟',back:'<b>نزف / انصمام رئوي (PE) / إنتان حتى يثبت العكس</b>. لا تتجاهله ولا تعزُه للألم فقط — قيّم وصعّد.',ref:'مبادئ ما بعد الجراحة'},
+{id:'G2',mod:'G',type:'fact',danger:true,front:'ألم بطني شديد لا يتناسب مع الفحص (بطن طريّ نسبياً)؟',back:'احذر <b>الإقفار المساريقي (mesenteric ischaemia)</b> — قد يكون قاتلاً وخادعاً. lactate مرتفع. صعّد فوراً.',ref:'البطن الحاد'},
+{id:'G3',mod:'G',type:'fact',danger:true,front:'هواء حرّ تحت الحجاب في صورة صدر منتصبة؟',back:'<b>انثقاب حشوي (perforation)</b> = طارئ جراحي. صيام، سوائل، صادّات، صعّد للعمليات.',ref:'البطن الحاد'},
+{id:'G4',mod:'G',type:'fact',danger:true,front:'فتق مؤلم + غير قابل للردّ + احمرار جلدي؟',back:'<b>فتق مختنق (strangulated)</b> = طارئ جراحي (خطر إقفار الأمعاء). لا تحاول الردّ القسري — استدعِ.',ref:'جراحة الفتوق'},
+{id:'G5',mod:'G',type:'fact',danger:true,front:'يرقان + حمّى + ألم ربع علوي أيمن؟',back:'<b>التهاب أقنية صفراوية (cholangitis)</b> — ثلاثي Charcot. إضافة هبوط ضغط + تشوّش = خماسي Reynolds = طارئ (صادّات + تصريف عاجل).',ref:'جراحة الصفراء'},
+{id:'G6',mod:'G',type:'fact',danger:true,front:'أنثى بعمر الإنجاب مع ألم بطني/حوضي؟',back:'<b>اعمل اختبار حمل (β-hCG) دائماً</b> — استبعد <b>الحمل الهاجر (ectopic)</b> قبل أي شيء.',ref:'قاعدة سلامة'},
+{id:'G7',mod:'G',type:'fact',danger:true,front:'مسنّ: هبوط ضغط + ألم ظهر + كتلة بطنية نابضة؟',back:'<b>تمزّق أمّ دم أبهرية بطنية (ruptured AAA)</b> = طارئ مهدّد للحياة. استدعِ الجراحة الوعائية فوراً، لا تؤخّر بالصور.',ref:'جراحة الأوعية'},
+{id:'G8',mod:'G',type:'fact',danger:true,front:'تدنٍّ جديد في مستوى الوعي (GCS)؟',back:'<b>مجرى هوائي مهدّد</b> (GCS≤8) + ابحث عن السبب — ولا تنسَ <b>سكّر الدم</b>. استدعِ التخدير.',ref:'ABCDE'},
+{id:'G9',mod:'G',type:'fact',danger:true,front:'هبوط ضغط + غياب دخول هواء أحادي الجانب + انحراف رغامى؟',back:'<b>استرواح صدري ضاغط (tension pneumothorax)</b> — <b>تشخيص سريري لا بالأشعة</b>. استدعِ فوراً للتخفيف بالإبرة/أنبوب صدري.',ref:'ATLS'},
+{id:'G10',mod:'G',type:'fact',danger:true,front:'تدهور بين اليوم 5–7 بعد جراحة مفاغرة معوية؟',back:'<b>تسريب مفاغرة (anastomotic leak)</b> حتى يثبت العكس — تسرّع قلب، حمّى، ألم متزايد، ارتفاع CRP. صعّد + تصوير.',ref:'جراحة الجهاز الهضمي'},
+
+/* ===== H — البطن الحاد (Acute Abdomen) ===== */
+{id:'H1',mod:'H',type:'fact',front:'ما منهج SOCRATES لأخذ قصّة ألم البطن؟',back:'<b>S</b>ite (الموضع) · <b>O</b>nset (البداية: مفاجئة=ثقب/إقفار، تدريجية=التهاب) · <b>C</b>haracter (الصفة) · <b>R</b>adiation (الانتشار) · <b>A</b>ssociations (المصاحبات: قيء/حمّى/تغيّر تبرّز) · <b>T</b>iming (التوقيت) · <b>E</b>xacerbating/relieving (المثير/المخفّف) · <b>S</b>everity (الشدّة /10).',ref:'تدريس سريري معياري'},
+{id:'H2',mod:'H',type:'fact',front:'ما الفرق بين الألم الحشوي والجداري، ولماذا «ينتقل» ألم الزائدة؟',back:'<b>حشوي (visceral):</b> مبهم، حول الخطّ الأوسط، يصعب تحديده (ألياف لاإرادية تتبع جنين القناة الهضمية). <b>جداري (parietal/somatic):</b> حادّ، موضعيّ تماماً (تهيّج الصفاق الجداري).<br>الزائدة: ألم حشوي حول السرّة مبكّراً → حين يتهيّج الصفاق فوقها <b>ينتقل ويتموضع في الحفرة الحرقفية اليمنى (RIF)</b>. هذا «الانتقال» علامة كلاسيكية.',ref:'فسلجة سريرية / Bailey & Love'},
+{id:'H3',mod:'H',type:'fact',front:'ما علامات التهيّج البريتوني (Peritonism)، وما دلالتها؟',back:'<b>تيبّس إرادي (guarding)</b> · <b>ألم ارتدادي (rebound tenderness)</b> · <b>ألم بالقرع (percussion tenderness)</b> · <b>بطن خشبي (rigidity)</b> = صفاق محتدم. دلالتها: <b>التهاب الصفاق</b> — مؤشّر على حالة جراحية حادّة تحتاج تقييماً عاجلاً. التيبّس اللاإرادي + الصمت المعويّ ينذران بالتهاب صفاق منتشر.',ref:'تدريس سريري معياري'},
+{id:'H4',mod:'H',type:'fact',front:'ما التدبير المبدئي العام لأي بطن حاد؟',back:'<b>NBM</b> (Nil By Mouth = صائم) · <b>سوائل وريدية</b> · <b>مسكّن</b> (لا تحجبه — المسكّن لا يطمس التشخيص، أسطورة قديمة دُحضت) · مضاد قيء · <b>NG</b> عند القيء/الانسداد · قسطرة + ميزان سوائل · تحاليل · تصوير · <b>صعّد للجرّاح</b>.',ref:'مبادئ جراحية / NICE'},
+{id:'H5',mod:'H',type:'fact',front:'ما التحاليل الأساسية في البطن الحاد؟',back:'<b>FBC/CBC</b> (تعداد دم) · <b>U&E</b> (يوريا وشوارد) · <b>amylase/lipase</b> (لاستبعاد البنكرياس) · <b>LFT</b> (وظائف كبد) · <b>CRP</b> (التهاب) · <b>Lactate</b> (إقفار) · <b>G&S</b> (فصيلة) · <b>VBG</b> (غازات وريدية سريعة) · <b>β-hCG لكل أنثى بعمر الإنجاب</b> (استبعاد حمل هاجر).',ref:'مبادئ جراحية'},
+{id:'H6',mod:'H',type:'fact',front:'كيف تختار التصوير في البطن الحاد؟',back:'<b>erect CXR</b> (صورة صدر منتصبة): تكشف <b>هواءً حرّاً تحت الحجاب = انثقاب</b>. <b>CT بطن/حوض</b>: الأدقّ لأغلب الحالات (إقفار، انسداد، تجمّعات). <b>US (موجات فوق صوتية)</b>: للمرارة/الأقنية، الحوض النسائي، وشكّ AAA. <b>AXR</b>: محدود — للانسداد فقط.',ref:'مبادئ التصوير الجراحي'},
+{id:'H7',mod:'H',type:'fact',front:'كيف يتظاهر التهاب الزائدة الحاد (Appendicitis)؟',back:'ألم حول السرّة <b>ينتقل للحفرة الحرقفية اليمنى (RIF)</b> + <b>فقد شهية (anorexia)</b> + حرارة خفيفة + غثيان. علامات: ألم نقطة McBurney، Rovsing (ألم RIF عند جسّ الجهة اليسرى). أدوات الدعم مثل درجة <b>Alvarado</b> (من 10): <b>≤4 مستبعَد</b> · <b>5–6 راقب/صوّر (US/CT)</b> · <b>≥7 مرجّح — فكّر بالجراحة</b> · 9–10 تشخيصيّ. لا تُغني عن الحكم السريريّ.',ref:'Alvarado / Bailey & Love',verify:'local'},
+{id:'H8',mod:'H',type:'fact',front:'كيف تميّز المغص الصفراوي عن التهاب المرارة الحاد؟',back:'<b>مغص صفراوي (biliary colic):</b> ألم ربع علوي أيمن بعد الأكل الدسم، يهدأ خلال ساعات، <b>بلا حمّى ولا التهاب</b>. <b>التهاب مرارة حاد (acute cholecystitis):</b> ألم مستمر + حمّى + <b>علامة Murphy إيجابية</b> (توقّف الشهيق المؤلم عند جسّ تحت الضلوع اليمنى) + ارتفاع كريات/CRP. التدبير: صادّات + مسكّن ± استئصال مرارة.',ref:'Tokyo Guidelines (TG18) / Bailey & Love'},
+{id:'H9',mod:'H',type:'fact',danger:true,front:'التهاب الأقنية الصفراوية (Cholangitis): التشخيص والتدبير؟',back:'ثلاثي <b>Charcot</b> (حمّى + يرقان + ألم RUQ) — حساسيّته منخفضة (16–72٪) فلا تنتظره كاملاً. + هبوط ضغط + تشوّش = خماسي <b>Reynolds</b> = إنتان صفراوي مهدِّد.<br><b>التدبير (طارئ):</b> إنعاش + <b>صادّ واسع خلال ساعة</b> (عند الإنتان) + <b>تصريف صفراوي عاجل بالتنظير ERCP</b> (الخط الأول) + صعّد فوراً.',ref:'Tokyo Guidelines (TG18) 2018'},
+{id:'H10',mod:'H',type:'fact',front:'كيف يُشخّص التهاب البنكرياس الحاد وما أسبابه؟',back:'<b>التشخيص = ٢ من ٣</b> (تصنيف Atlanta المنقّح 2012): ① ألم بطني مميّز (شرسوفيّ ينتشر للظهر) · ② <b>lipase أو amylase ≥ ٣× الحدّ الأعلى الطبيعي</b> · ③ صورة مميّزة (CT/MRI).<br><b>الأسباب — I GET SMASHED:</b> Idiopathic, Gallstones, Ethanol (الأشهران: الحصى والكحول), Trauma, Steroids, Mumps, Autoimmune, Scorpion, Hyper(Ca/lipidaemia), ERCP, Drugs.',ref:'Atlanta Classification (revised 2012)'},
+{id:'H11',mod:'H',type:'fact',front:'ما تدبير التهاب البنكرياس الحاد، وكيف تُقيَّم شدّته؟',back:'<b>التدبير داعم:</b> سوائل وريدية بسخاء (إنعاش)، مسكّن، مضاد قيء، تغذية مبكّرة عند التحمّل، مراقبة. <b>لا صادّ روتينيّ</b> ما لم يثبت إنتان/نخر مُتعفّن.<br><b>الشدّة (عتبات معياريّة):</b> <b>Glasgow-Imrie المعدّل ≥3 خلال 48سا = شديد → صعّد</b> · <b>CRP >150 mg/L عند 48سا</b> · APACHE II ≥8. الشديد قد يحتاج HDU/ICU.',ref:'Glasgow-Imrie / Atlanta',verify:'local'},
+{id:'H12',mod:'H',type:'fact',front:'كيف يتظاهر التهاب الرتوج (Diverticulitis) ويُدبَّر؟',back:'مريض <b>أكبر سنّاً</b> + <b>ألم الحفرة الحرقفية اليسرى (LIF)</b> + حمّى + تغيّر عادة التبرّز + ارتفاع التهابي. التشخيص: <b>CT</b>. التدبير: غير المعقّد → صادّات ± سوائل ± راحة أمعاء؛ المعقّد (خرّاج/انثقاب/ناسور) → تصريف/جراحة. <b>تجنّب التنظير في الطور الحاد</b> (خطر انثقاب).',ref:'مبادئ جراحية'},
+{id:'HS1',mod:'H',type:'scenario',front:'شاب 22 سنة: ألم بدأ حول السرّة وانتقل للحفرة الحرقفية اليمنى، فقد شهية، حرارة 37.8.',back:'',ref:'نهج التهاب الزائدة',steps:[
+  {q:'ما تشخيصك الأرجح ولماذا «انتقل» الألم؟',a:'<b>التهاب زائدة حاد</b>. الانتقال = ألم حشوي حول السرّة مبكّراً ثم تموضُع جداريّ في RIF عند تهيّج الصفاق فوق الزائدة.'},
+  {q:'ماذا تفحص وتطلب؟',a:'علامات: McBurney، Rovsing، التهيّج البريتوني. تحاليل: FBC, CRP, U&E, <b>β-hCG (هنا ذكر لكن القاعدة لكل أنثى)</b>، بول. تصوير عند الشكّ: US/CT. أدوات دعم: Alvarado.'},
+  {q:'التدبير المبدئي؟',a:'<b>NBM</b>، سوائل وريدية، مسكّن، مضاد قيء، <b>صعّد للجرّاح</b> للنظر في استئصال الزائدة. لا تؤخّر الاستشارة.'},
+]},
+{id:'HS2',mod:'H',type:'scenario',front:'رجل 45 سنة مدمن كحول: ألم شرسوفيّ شديد ينتشر للظهر + قيء متكرّر.',back:'',ref:'نهج التهاب البنكرياس',steps:[
+  {q:'تشخيصك العامل وكيف تؤكّده؟',a:'<b>التهاب بنكرياس حاد</b> (الكحول سبب شائع). التأكيد: <b>٢ من ٣</b> — الألم المميّز + <b>lipase/amylase ≥ ٣× الحدّ الأعلى</b> + صورة عند اللزوم.'},
+  {q:'ماذا تطلب وتراقب؟',a:'amylase/lipase, FBC, U&E, LFT, Ca, glucose, CRP, lactate, VBG. قيّم الشدّة (Glasgow/APACHE/CRP 48سا) وراقب العلامات الحيوية والبول.'},
+  {q:'التدبير؟',a:'<b>داعم:</b> سوائل وريدية بسخاء، مسكّن، مضاد قيء، تغذية مبكّرة عند التحمّل، مراقبة. <b>لا صادّ روتينيّ.</b> صعّد إن علامات شدّة/تدهور (قد يلزم HDU/ICU).'},
+]},
+
+/* ===== I — الانسداد المعوي + النزف الهضمي + الفتوق ===== */
+{id:'I1',mod:'I',type:'fact',front:'ما العلامات الأربع الأساسية للانسداد المعوي، وكيف تميّز SBO عن LBO؟',back:'الأربع: <b>ألم مغصيّ · قيء · انتفاخ · إمساك مطلق (لا براز ولا ريح)</b>.<br><b>SBO</b> (انسداد أمعاء دقيقة): قيء مبكّر، انتفاخ أقلّ — أشهر سببين <b>التصاقات وفتوق</b>.<br><b>LBO</b> (غليظة): انتفاخ أكبر، قيء متأخّر، إمساك مبكّر — أشهر سبب <b>ورم</b> ثم انفتال (volvulus).',ref:'Bailey & Love'},
+{id:'I2',mod:'I',type:'fact',danger:true,front:'ما العلامات التي تحوّل الانسداد المعوي إلى طارئ جراحي؟',back:'علامات <b>الاختناق/الإقفار (strangulation):</b> ألم مستمر شديد (لا مغصيّ)، <b>حماض ولاكتات مرتفع</b>، حرارة، تسرّع قلب، ألم ارتدادي/التهاب صفاق. = خطر موت أمعاء → <b>استدعِ الجرّاح فوراً</b>.',ref:'Bailey & Love'},
+{id:'I3',mod:'I',type:'fact',front:'ما التدبير المبدئي للانسداد المعوي («drip and suck»)؟',back:'<b>Drip</b> = سوائل وريدية + تصحيح الشوارد. <b>Suck</b> = أنبوب أنفي معدي (<b>NG</b>) للتخفيف الضغط والقيء. + صيام (NBM)، قسطرة وميزان سوائل، مسكّن، تحاليل وتصوير (CT). كثير من SBO الالتصاقي يتحسّن تحفّظياً؛ <b>الاختناق أو الفشل = جراحة</b>.',ref:'مبادئ جراحية'},
+{id:'I4',mod:'I',type:'fact',danger:true,front:'النزف الهضمي العلوي (UGIB): ما أولوية التدبير؟',back:'<b>الإنعاش أولاً</b> (ABCDE، خطّان كبيران، سحب دم + cross-match، دم عند الحاجة) — قبل التشخيص. ثم تقييم الخطورة (<b>Glasgow-Blatchford</b> قبل التنظير، <b>Rockall</b> بعده)، <b>PPI</b>، و<b>تنظير علاجي خلال 24 سا</b> (أعجل في عدم الاستقرار).',ref:'NICE CG141 (UGIB)'},
+{id:'I5',mod:'I',type:'fact',danger:true,front:'نزف دوالٍ مريئية (Variceal bleed): ما الإضافات الخاصّة؟',back:'فوق الإنعاش: <b>Terlipressin</b> (مقبّض وعائيّ حشويّ) + <b>صادّ وقائيّ</b> (يقلّل الوفيات والعدوى في تشمّع الكبد) + تنظير عاجل (ربط/تصليب). صعّد للطوارئ/الكبد.',ref:'NICE / Baveno'},
+{id:'I6',mod:'I',type:'fact',front:'ما تصنيف الفتوق من حيث القابلية للردّ؟',back:'<b>قابل للردّ (reducible):</b> يعود بالضغط — مطمئن نسبياً.<br><b>غير قابل/محتبس (irreducible/incarcerated):</b> لا يعود، بلا إقفار بعد.<br><b>منسدّ (obstructed):</b> محتواه أمعاء منسدّة.<br><b>مختنق (strangulated):</b> + إقفار وعائيّ = طارئ.',ref:'جراحة الفتوق'},
+{id:'I7',mod:'I',type:'fact',danger:true,front:'متى يكون الفتق طارئاً جراحياً، وما الخطأ الذي يجب تجنّبه؟',back:'<b>مختنق</b> = <b>مؤلم + غير قابل للردّ + احمرار جلديّ ± علامات انسداد</b> → إقفار أمعاء → <b>جراحة عاجلة</b>. <b>الخطأ:</b> محاولة الردّ القسري لفتق مختنق (قد تُعيد أمعاءً ميتة للبطن) — <b>استدعِ ولا تُجبره</b>.',ref:'جراحة الفتوق'},
+{id:'IS1',mod:'I',type:'scenario',danger:true,front:'مريض سبق له جراحة بطن: ألم مغصيّ، قيء، انتفاخ، لم يتبرّز منذ يومين. ثم صار الألم مستمراً شديداً مع حرارة.',back:'',ref:'الانسداد المعوي',steps:[
+  {q:'تشخيصك ومرحلته؟',a:'<b>انسداد أمعاء دقيقة (SBO)</b> غالباً التصاقيّ. تحوّل الألم لمستمرّ + حرارة = <b>إنذار اختناق</b>.'},
+  {q:'ماذا تفعل مبدئياً؟',a:'<b>Drip and suck</b>: سوائل + NG + NBM + قسطرة. تحاليل: FBC, U&E, <b>lactate/VBG</b>, G&S. تصوير CT.'},
+  {q:'الخطوة الحاسمة الآن؟',a:'علامات الاختناق = <b>صعّد للجرّاح فوراً</b> — قد يلزم استكشاف عاجل. لا تطل التحفّظ على بطن مختنق.'},
+]},
+{id:'IS2',mod:'I',type:'scenario',danger:true,front:'مريض تشمّع كبديّ: تقيّأ دماً أحمر غزيراً، HR 120، BP 88/56، شاحب.',back:'',ref:'نزف هضمي علويّ / دوالٍ',steps:[
+  {q:'أولويتك المطلقة؟',a:'<b>الإنعاش (ABCDE)</b> — خطّان كبيران، سحب دم + cross-match، سوائل/دم، أكسجين. غير مستقرّ = لا تنتظر التشخيص.'},
+  {q:'ما الإضافات لاحتمال الدوالي؟',a:'<b>Terlipressin + صادّ وقائيّ</b>، وحضّر <b>تنظيراً عاجلاً</b> (ربط دوالٍ).'},
+  {q:'ثم؟',a:'صعّد للطوارئ/الكبد/التنظير، راقب الاستجابة وأعد التقييم. قيّم بـ Glasgow-Blatchford/Rockall.'},
+]},
+
+/* ===== J — الرضوح (ATLS 11) ===== */
+{id:'J1',mod:'J',type:'fact',danger:true,front:'ما تسلسل المسح الأوّليّ في الرضوح (ATLS 11)؟',back:'<b>x</b>ABCDE: <b>x</b> = السيطرة على <b>النزف الخارجي الهائل أولاً</b> (ضغط/عاصبة) → <b>A</b> مجرى + حماية رقبة → <b>B</b> تنفّس → <b>C</b> دوران (إيقاف نزف + دم) → <b>D</b> عصبيّ (GCS) → <b>E</b> كشف + منع انخفاض الحرارة. <b>عالج كل خطوة قبل التالية، وأعد التقييم عند أي تدهور.</b>',ref:'ATLS 11th ed. 2025'},
+{id:'J2',mod:'J',type:'fact',danger:true,front:'لماذا قُدّم «x» (النزف الهائل) على المجرى في ATLS 11؟',back:'لأن النزف الخارجي الكتليّ قد يقتل <b>أسرع</b> من انسداد المجرى. السيطرة: <b>ضغط مباشر</b> → حشو الجرح → <b>عاصبة (tourniquet)</b> للأطراف. ثم تابع ABCDE.',ref:'ATLS 11th ed. 2025'},
+{id:'J3',mod:'J',type:'fact',front:'ما مبدأ «permissive hypotension» في الرضح النازف؟',back:'السماح بضغط شريانيّ أخفض نسبياً <b>قبل</b> السيطرة الجراحية على النزف، لأن رفع الضغط بالسوائل يطرد الخثرة ويزيد النزف ويميّع الدم. لذا: <b>≤1 لتر بلّورية ثم دم</b> (راجع F4). <b>استثناء: إصابة الدماغ</b> (تحتاج ضغطاً كافياً لتروية المخ).',ref:'ATLS 11th ed. 2025'},
+{id:'J4',mod:'J',type:'fact',front:'ما دور FAST والمُلحقات في الرضح؟',back:'<b>FAST</b> = تقييم بالموجات فوق الصوتية للبحث عن <b>دم حرّ</b> في البطن/التامور بسرعة بجانب السرير. مُلحقات المسح الأوّليّ: <b>صورة صدر + حوض</b>، غازات/لاكتات، خطّان وريديان. (CT للمستقرّ فقط.)',ref:'ATLS 11th ed. 2025'},
+{id:'J5',mod:'J',type:'fact',front:'ما قصّة AMPLE والمسح الثانويّ؟',back:'<b>AMPLE</b>: <b>A</b>llergies · <b>M</b>edications · <b>P</b>ast history · <b>L</b>ast meal · <b>E</b>vents (آلية الإصابة). <b>المسح الثانويّ</b> = فحص رأس-إلى-قدم منهجيّ <b>بعد</b> استقرار المسح الأوّليّ، لكشف كل الإصابات.',ref:'ATLS 11th ed. 2025'},
+{id:'J6',mod:'J',type:'fact',danger:true,front:'في إصابة الرأس: متى يكون المجرى مهدّداً، وما علامات ارتفاع الضغط داخل القحف؟',back:'<b>GCS ≤ 8 → مجرى نهائيّ (تنبيب مع التخدير)</b>. علامات ارتفاع ICP: تدهور وعي، حدقة متوسّعة أحادية، ثالوث Cushing (<b>ارتفاع ضغط + بطء قلب + تنفّس غير منتظم</b>). احمِ الرقبة (C-spine) حتى الاستبعاد. <b>لا تنسَ سكّر الدم.</b>',ref:'ATLS 11th ed. 2025'},
+{id:'JS1',mod:'J',type:'scenario',danger:true,front:'مصاب حادث سير: نزف فخذيّ غزير، يتأوّه، RR 30، أطراف باردة، نبض سريع ضعيف.',back:'',ref:'المسح الأوّليّ xABCDE',steps:[
+  {q:'أول فعل (x)؟',a:'<b>أوقف النزف الخارجي فوراً</b>: ضغط مباشر ثم <b>عاصبة</b> على الفخذ. هذا قبل المجرى.'},
+  {q:'ثم A و B و C؟',a:'A: مجرى + <b>حماية رقبة</b>. B: أكسجين، افحص الصدر. C: خطّان كبيران، دم، <b>permissive hypotension</b>، فكّر MTP 1:1:1 و<b>TXA</b> (راجع F5/F6).'},
+  {q:'ماذا أيضاً؟',a:'D: GCS. E: كشف + تدفئة. مُلحقات: FAST، صورة صدر/حوض، lactate. <b>صعّد لفريق الرضوح فوراً.</b>'},
+]},
+
+/* ===== K — المهارات العملية ===== */
+{id:'K1',mod:'K',type:'fact',front:'ما الفرق بين العقدة المربّعة وعقدة الجدّة، ولماذا يهمّ؟',back:'<b>مربّعة (square/reef):</b> تُبدّل اتجاه كل رمية (throw) → تثبت ولا تنزلق. <b>عقدة الجدّة (granny):</b> رميتان بنفس الاتجاه → <b>تنزلق وتنفكّ — تجنّبها</b>. <b>عقدة الجرّاح (surgeon\'s):</b> لفّ مزدوج بالرمية الأولى يمنع الانزلاق تحت الشدّ.',ref:'مبادئ جراحية'},
+{id:'K2',mod:'K',type:'fact',front:'كم رمية تحتاج، وما تقنيات ربط العقد؟',back:'عدد الرميات: <b>خيط مضفور ~4</b>، <b>أحاديّ (monofilament) 6–8</b>. التقنيات: <b>two-handed tie</b> (الأساس — أتقنه أولاً)، <b>instrument tie</b> (للخياطة)، <b>one-handed</b> (متقدّم). <b>✋ تدرّب يدوياً</b> على رباط حذاء/طقم خياطة حتى يصير آلياً.',ref:'مبادئ جراحية'},
+{id:'K3',mod:'K',type:'fact',front:'ما مراحل قائمة السلامة الجراحية (WHO Checklist)؟',back:'<b>Sign in</b> (قبل التخدير) · <b>Time out</b> (قبل الشقّ — تأكيد الهوية/الموضع/الإجراء) · <b>Sign out</b> (قبل مغادرة الغرفة — عدّ الإسفنج والأدوات). تمنع أخطاء جسيمة (موضع/مريض خطأ).',ref:'WHO Surgical Safety Checklist'},
+{id:'K4',mod:'K',type:'fact',front:'كيف تؤكّد موضع أنبوب NG قبل استعماله؟',back:'<b>الخط الأول: pH الرشافة ≤ 5.5</b> = آمن للاستعمال (يستبعد الموضع الرئويّ). إن تعذّر/شكّ → <b>CXR</b>. <b>لا تحقن شيئاً (تغذية/دواء/ماء) قبل تأكيد الموضع.</b> (تذكير: pH ≤4 يزيد الثقة بالموضع المعديّ.)',ref:'NPSA / NHS England'},
+{id:'K5',mod:'K',type:'fact',danger:true,front:'ما الجرعات القصوى للمخدّر الموضعيّ وعلامات سُمّيّته؟',back:'<b>Lidocaine 3 مغ/كغ</b> (7 مع أدرينالين) · <b>Bupivacaine 2 مغ/كغ</b>. تذكير: 1% = 10 مغ/مل. <b>LAST</b> (سُمّيّة جهازيّة): طنين، تنميل حول الفم، تشنّج، لا نظميّة → <b>أوقف الحقن، ABC، أكسجين، Intralipid 20%</b>. (راجع F8/F9.)',ref:'BNF / AAGBI'},
+{id:'K6',mod:'K',type:'fact',front:'ما الإجراءات الأساسية التي يجب أن تتقنها مبكّراً؟',back:'<b>قنية وريدية</b> · <b>سحب دم</b> · <b>زروعات دم (تقنية معقّمة)</b> · <b>ABG</b> · <b>قسطرة بولية</b> · <b>أنبوب NG</b>. <b>✋ تدرّب على الدمى/المحاكيات في مركزك</b>، وشاهد فيديوهات Geeky Medics (فيديو + checklist لكلٍّ).',ref:'Geeky Medics'},
+
+/* ===== L — صندوق أدوات القسم ===== */
+{id:'L1',mod:'L',type:'fact',front:'ما سُلّم المسكّنات (WHO) ومعايرة المورفين؟',back:'<b>الدرجة 1:</b> Paracetamol (1 غ/6سا، أقصى 4 غ/يوم — راجع F7) ± NSAID (بحذر: كلية/قرحة/نزف). <b>الدرجة 2–3:</b> أفيونيّات. <b>Morphine IV</b> بمعايرة <b>1–2 مغ</b> تدريجياً مع مراقبة التنفّس. (احذر tramadol: تفاعلات + خفض عتبة الصرع.)',ref:'WHO Analgesic Ladder / BNF'},
+{id:'L2',mod:'L',type:'fact',front:'ما مضادات القيء الشائعة ومتى تتجنّب بعضها؟',back:'<b>Ondansetron</b> (احذر إطالة QT) · <b>Cyclizine</b> · <b>Metoclopramide</b> — <b>تجنّبه في الانسداد المعويّ</b> (مُحرّك) <b>وفي الشباب</b> (تأثيرات خارج هرميّة). اختر حسب السبب والمريض.',ref:'BNF'},
+{id:'L3',mod:'L',type:'fact',front:'ما توقيت الصادّات الجراحية مقابل الإنتان؟',back:'<b>الوقاية الجراحية: خلال 60 دقيقة قبل الشقّ</b> (جرعة واحدة غالباً). <b>الإنتان: صادّ واسع خلال ساعة</b>. المبدأ الأهمّ: <b>السيطرة على المصدر (source control)</b> — الصادّ وحده لا يكفي. اتبع بروتوكول قسمك.',ref:'مبادئ / Surviving Sepsis'},
+{id:'L4',mod:'L',type:'fact',danger:true,front:'ما إطار تدبير الحُماض الكيتونيّ السكّريّ (DKA)؟',back:'<b>① سوائل أولاً:</b> 0.9% sodium chloride (إنعاش ثم صيانة). <b>② إنسولين ثابت (FRIII): 0.1 وحدة/كغ/سا.</b> <b>③ البوتاسيوم:</b> راقبه وعوّضه (الإنسولين يُدخله للخلايا فيهبط). <b>④ حين BG < 14:</b> أضِف <b>جلوكوز 10%</b> (وقد يُخفَّض الإنسولين 0.05). راقب الكيتونات/الفجوة. <b>عالج المُحرِّض.</b>',ref:'JBDS DKA 2022/2023'},
+{id:'L5',mod:'L',type:'fact',danger:true,front:'ماذا تفعل عند تفاعل نقل دم؟',back:'<b>أوقف النقل فوراً</b> + ABCDE + أبقِ خطّ الوريد بسالين + تحقّق من هوية الوحدة/المريض + <b>صعّد</b> وأبلغ بنك الدم. أي حمّى/تيبّز/ضيق نفَس/هبوط ضغط/ألم ظهر/بول داكن أثناء النقل = تفاعل حتى يثبت العكس.',ref:'مبادئ نقل الدم'},
+{id:'L6',mod:'L',type:'fact',danger:true,front:'كيف تتعامل مع نقص سكّر الدم (Hypoglycaemia)؟',back:'<b>DEFG = Don\'t Ever Forget Glucose.</b> سكّر < 4 mmol/L (مع أعراض): واعٍ ويبلع → سكّريّات فمويّة سريعة؛ غير واعٍ/لا يبلع → <b>جلوكوز وريديّ (مثلاً 10% IV)</b> أو <b>Glucagon IM</b>. أعد القياس وكرّر. يُقلّد نقصُ السكّر السكتةَ والإنتانَ — افحصه دائماً في أي تدنّي وعي.',ref:'BNF / مبادئ'},
+{id:'LS1',mod:'L',type:'scenario',danger:true,front:'سكّريّ شاب: غثيان وقيء، تنفّس عميق سريع، سكّر 28، كيتونات مرتفعة، حماض.',back:'',ref:'تدبير DKA',steps:[
+  {q:'تشخيصك وترتيب أولوياتك؟',a:'<b>DKA</b>. ABCDE. الترتيب: <b>سوائل (0.9% saline) أولاً</b>، ثم إنسولين، مع <b>مراقبة البوتاسيوم</b>.'},
+  {q:'الإنسولين والبوتاسيوم؟',a:'<b>FRIII 0.1 وحدة/كغ/سا</b>. أضِف بوتاسيوم للسوائل حسب مستواه (يهبط مع الإنسولين). راقب ECG/المستوى.'},
+  {q:'متى تضيف الجلوكوز ومتى تصعّد؟',a:'حين <b>BG < 14</b> أضِف <b>جلوكوز 10%</b>. صعّد للباطنة/العناية إن شدّة (هبوط وعي، حماض شديد، اضطراب بوتاسيوم) وعالج المُحرِّض.'},
+]},
+
+/* ===== M — التوثيق والتسليم والموافقة ===== */
+{id:'M1',mod:'M',type:'fact',front:'ما مبادئ التوثيق الطبيّ الذي يحميك؟',back:'وثّق بوضوح وموضوعيّة مع <b>الوقت والتاريخ والاسم والتوقيع</b>. القاعدة: <b>«ما لم يُوثَّق فلم يحدث»</b>. سجّل القرارات والتصعيد ومن اتصلت به ومتى. (وأنت طبيب-قانونيّ تدرك قيمة هذا.)',ref:'مبادئ مهنية / GMC'},
+{id:'M2',mod:'M',type:'fact',front:'كيف تسلّم المرضى بأمان (Handover)؟',back:'استعمل <b>SBAR</b> + قائمة مرضى محدّثة + <b>المهامّ العالقة</b> + <b>«من أنا قلِق عليه»</b>. التسليم الرديء سبب رئيسيّ للأخطاء. لا تترك معلومة حرجة شفهيّة فقط.',ref:'NHS / IHI'},
+{id:'M3',mod:'M',type:'fact',front:'ما حدودك في الموافقة المستنيرة كمقيم سنة أولى؟',back:'الموافقة تتطلّب أن يفهم آخذُها الإجراءَ ومخاطرَه وبدائلَه. <b>غالباً لست أنت من يأخذ موافقة العمليات الكبرى</b> — اعرف حدّك وأحِل للأقدم المؤهَّل. وثّق دوماً.',ref:'GMC / مبادئ الموافقة'},
+{id:'M4',mod:'M',type:'fact',front:'كيف تنجو في المناوبة (On-call)؟',back:'<b>فرز:</b> حرج/غير حرج، رتّب بالأولوية. راجِع المتدهور بنفسك (لا بالهاتف فقط). <b>عتبة منخفضة جداً لإيقاظ الأخصائيّ ليلاً</b> — لا تتباطأ على مريض متدهور. وثّق ونظّم قائمة مهامك.',ref:'مبادئ المناوبة'},
+{id:'M5',mod:'M',type:'fact',front:'ما إطار تبليغ الأخبار الصعبة (SPIKES)؟',back:'<b>S</b>etting (مكان مناسب) · <b>P</b>erception (ماذا يعرف المريض) · <b>I</b>nvitation (كم يريد أن يعرف) · <b>K</b>nowledge (أخبره بوضوح وتدرّج) · <b>E</b>motions (تعاطف مع المشاعر) · <b>S</b>trategy/Summary (خطة وخلاصة).',ref:'SPIKES (Baile et al.)'},
+
+/* ===== N — الدور والفريق والتصعيد (Non-technical / Human Factors) ===== */
+{id:'N1',mod:'N',type:'fact',front:'ما دورك كطبيب سنة أولى عند مريض حرِج؟',back:'دورك الثلاثيّ: <b>تعرّف (Recognise) → أنعش (Resuscitate بـ ABCDE ضمن حدودك) → صعّد (Refer/Escalate)</b>. أنت أوّل من يقيّم ويثبّت، <b>لست</b> صاحب القرار النهائيّ في التدبير الكبير. اعمل دائماً <b>ضمن حدود كفاءتك (within competence)</b> وصعّد الباقي.',ref:'GMC Good Medical Practice'},
+{id:'N2',mod:'N',type:'fact',danger:true,front:'متى تطلب المساعدة وتصعّد — بلا تردّد؟',back:'• أي خلل ABCDE لا يتحسّن بإجرائك.<br>• أي علامة «ممنوع أن تفوّتها».<br>• <b>حدسك قلِق</b> رغم أرقام مقبولة.<br>• إجراء يتجاوز كفاءتك.<br>• <b>لا تعرف ماذا تفعل</b>.<br><b>قاعدة:</b> لا أحد يُلام على تصعيد مبكّر؛ كثيرون أُوذوا بالصمت. التصعيد قوّة لا ضعف.',ref:'مبادئ السلامة / GMC'},
+{id:'N3',mod:'N',type:'fact',front:'ما سلّم التصعيد — بمن تتصل وبأيّ ترتيب؟',back:'<b>ممرّض/ة المسؤول → زميل مقيم/SHO → المقيم الأقدم (Registrar) → الأخصائيّ/الاستشاريّ</b>. اصعد الدرجة فالأعلى — <b>لكن في الطارئ الحقيقيّ لا تتدرّج ببطء:</b> أطلق نداء الطوارئ/فريق الإنعاش فوراً. اعرف أرقام مناوبة قسمك مسبقاً.',ref:'مبادئ المناوبة'},
+{id:'N4',mod:'N',type:'fact',front:'إذا رأيت قراراً غير آمن من زميل/أقدم، كيف تتكلّم بأمان؟ (PACE)',back:'<b>تأكيد متدرّج PACE</b>: <b>P</b>robe (سؤال لطيف: «ساعدني أفهم الخطّة») → <b>A</b>lert (تنبيه: «هل نعيد التقييم؟») → <b>C</b>hallenge (اعتراض: «أنا قلق، من فضلك توقّف لنراجع») → <b>E</b>scalate (تصعيد فوريّ). ابدأ لطيفاً وتدرّج، وارجع دائماً لـ<b>ملاحظة موضوعيّة عن المريض</b> لا لنقد الشخص.',ref:'PACE (RCOG / aviation-derived)'},
+{id:'N5',mod:'N',type:'fact',front:'إذا لم يُسمَع قلقك، ما الكلمات الموحّدة؟ (CUS + Two-Challenge)',back:'<b>CUS</b> (TeamSTEPPS): «أنا <b>C</b>oncerned قلِق» → «أنا <b>U</b>ncomfortable غير مرتاح» → «هذه <b>S</b>afety مسألة سلامة — توقّف واسمعني». لغة حازمة غير عدائيّة تركّز على السلامة.<br><b>قاعدة التحدّي مرّتين:</b> إن تجاهلك أحدهم مرّتين، صعّد لِمن هو أعلى.',ref:'TeamSTEPPS (AHRQ/AHA)'},
+{id:'N6',mod:'N',type:'fact',danger:true,front:'الأقدم عبر الهاتف قال «راقبه فقط» لكن المريض يبدو سيّئاً. ماذا تفعل؟',back:'<b>لا تُطَمئَن زائفاً (false reassurance).</b> ثِق بتقييمك وبالمريض أمامك. قُل صراحةً: <b>«أنا قلق، أحتاج أن تأتي وتراه بنفسك الآن».</b> الهاتف لا يرى المريض. كرّر التصعيد إن لزم (CUS / Two-Challenge / لِمن هو أعلى).',ref:'مبادئ السلامة'},
+{id:'N7',mod:'N',type:'fact',danger:true,front:'كيف تعمل مع التمريض، ولماذا «الممرّضة قلِقة» مهمّة جداً؟',back:'الممرّضون <b>عيناك على المريض ٢٤ ساعة</b> ويكتشفون التدهور أولاً غالباً. <b>«الممرّض/ة قلِق(ة)» منبّه مُثبَت لتدهور وشيك — لا تتجاهله أبداً.</b> اكتب أوامر واضحة، كن متاحاً، احترم خبرتهم، واذهب لرؤية المريض حين يُستدعى منك.',ref:'مبادئ السلامة / Rapid Response'},
+{id:'N8',mod:'N',type:'fact',front:'كيف تُحيل/تستشير تخصصاً آخر بفاعليّة؟',back:'فرّق: <b>إحالة (referral)</b> = نقل/مشاركة رعاية · <b>استشارة (consult)</b> = طلب رأي. قدّمها بـ<b>SBAR + سؤال محدّد واضح</b> («أطلب رأيكم في…»). اعرف <b>مَن «يملك» المريض</b> (الفريق الأمّ مقابل المستشير). وعموماً <b>صعّد داخل فريقك أولاً</b> قبل استدعاء تخصص آخر، إلا في الطارئ.',ref:'مبادئ المناوبة'},
+{id:'N9',mod:'N',type:'fact',danger:true,front:'ماذا تفعل بينما تنتظر وصول الأقدم؟ (لا تتجمّد)',back:'<b>أبقِ نفسك مشغولاً بالمفيد:</b><br>• كرّر <b>ABCDE</b> وأعد التقييم باستمرار.<br>• افعل ما هو ضمن كفاءتك (أكسجين، سوائل، وضعيّة، مراقبة، خطّ وريديّ، ECG، تحاليل).<br>• <b>فوّض:</b> اطلب من الممرّض العلامات/عربة الإنعاش/التجهيزات.<br>• اجمع: الملفّ، قائمة الأدوية، النتائج.<br>• حضّر <b>SBAR</b>. <b>وابقَ مع المريض.</b>',ref:'مبادئ الإنعاش / CRM'},
+{id:'N10',mod:'N',type:'fact',front:'ما العقليّة الصحيحة تجاه طلب المساعدة؟',back:'<b>طلب العون = كفاءة لا ضعف.</b> «لا أعرف» جملة مهنيّة محترمة. تكلّم عن السلامة <b>بغضّ النظر عن التراتبيّة</b>. <b>أنت لست وحدك في أي قرار</b> — محاط بطبقة من الأقدم على مدار الساعة. الطبيب الذي يقلق ويستعدّ ويصعّد مبكّراً هو الأكثر أماناً.',ref:'Human Factors / مبادئ مهنية'},
+{id:'NS1',mod:'N',type:'scenario',danger:true,front:'الساعة ٣ فجراً: مريضك يتدهور (HR 130، BP 85، مشوّش). اتصلت بالأقدم فقال «أعطه سوائل وراقب، سآتي صباحاً».',back:'',ref:'التصعيد والتوكيد المتدرّج',steps:[
+  {q:'هل تقبل بذلك؟',a:'لا — مريض غير مستقرّ. ثِق بتقييمك. <b>لا تُطَمئَن زائفاً.</b>'},
+  {q:'كيف تتكلّم؟',a:'<b>توكيد متدرّج (CUS):</b> «أنا قلِق جداً، وهذه مسألة سلامة — علاماته كذا، <b>أحتاج أن تأتي تراه الآن</b>». وإن تجاهلك → <b>صعّد لمن هو أعلى منه (Two-Challenge).</b>'},
+  {q:'ماذا تفعل بينما تنتظر؟',a:'<b>أمسك الموقف:</b> ABCDE متكرّر، أكسجين/سوائل/مراقبة/خطّ وريديّ/تحاليل/ECG، فوّض للممرّض، اجمع الملفّ، حضّر SBAR، <b>وابقَ مع المريض.</b>'},
+]},
+
+/* ===== O — الأدوات والخيوط والخياطة ===== */
+{id:'O1',mod:'O',type:'fact',front:'ما الأدوات الجراحية الأساسية التي يجب أن تعرفها وتسمّيها؟',back:'<b>مشرط (scalpel):</b> نصل <b>10</b> (شقّ)، <b>15</b> (دقيق)، <b>11</b> (وخز/فتح خرّاج). <b>حامل إبرة</b> للخياطة. <b>ملقط:</b> مسنّن (toothed) للجلد، غير مسنّن للأنسجة الرقيقة. <b>مقصّات:</b> Mayo (نسيج كثيف/خيوط)، Metzenbaum (تشريح رقيق). <b>كلّابات شريانيّة:</b> mosquito الصغيرة، Kelly. <b>كلّاب فوط · مبعّدات (Langenbeck) · شفط (Yankauer).</b>',ref:'مبادئ جراحية'},
+{id:'O2',mod:'O',type:'fact',front:'كيف تُصنّف الخيوط الجراحية؟',back:'<b>بالامتصاص:</b> ممتصّ (يختفي — للأنسجة الداخليّة) · غير ممتصّ (يبقى/يُزال — جلد، أوعية). <b>بالبنية:</b> أحاديّ (monofilament) أملس أقلّ عدوى أصعب عقداً · مضفور (braided) أسهل ربطاً أكثر إيواءً للجراثيم.<br>أمثلة: <b>Vicryl</b> ممتصّ مضفور · <b>Monocryl</b> ممتصّ أحاديّ · <b>PDS</b> ممتصّ أحاديّ طويل · <b>Prolene/Ethilon</b> غير ممتصّ أحاديّ · <b>Silk</b> غير ممتصّ مضفور.',ref:'مبادئ جراحية'},
+{id:'O3',mod:'O',type:'fact',front:'أيّ خيط ومقاس لأيّ نسيج؟',back:'<b>جلد:</b> غير ممتصّ أحاديّ (Ethilon/Prolene) — الوجه <b>5-0/6-0</b>، الجذع/الأطراف <b>3-0/4-0</b>. <b>تحت الجلد/دهن:</b> ممتصّ (Vicryl). <b>لفافة (fascia):</b> أحاديّ متين بطيء (PDS 1/0). <b>أمعاء:</b> ممتصّ. <b>أوعية:</b> غير ممتصّ أحاديّ (Prolene). قاعدة: <b>كلّما كبر الرقم دقّ الخيط</b> (6-0 أدقّ من 3-0).',ref:'مبادئ جراحية'},
+{id:'O4',mod:'O',type:'fact',front:'ما أنواع الإبر وكيف تُحمّل حامل الإبرة؟',back:'<b>قاطعة (cutting):</b> للأنسجة المتينة (الجلد). <b>مدوّرة/مخروطيّة (taper):</b> للرقيقة (أمعاء/أوعية) لتقلّل التمزّق. <b>التحميل:</b> امسك الإبرة على <b>~ثلثيها من الطرف المدبّب</b>، عموديّة على فكّ الحامل، وادخل الجلد بزاوية <b>90°</b> متبعاً انحناءها بدوران المعصم.',ref:'مبادئ جراحية'},
+{id:'O5',mod:'O',type:'fact',front:'ما تقنيات الخياطة الأكثر طلباً ومتى تستعملها؟ (✋ تُتقَن يدوياً)',back:'<b>منفصلة بسيطة (simple interrupted):</b> حصان العمل — إن انفكّت واحدة بقي الباقي. <b>مستمرّة (continuous):</b> أسرع للجروح الطويلة النظيفة. <b>مرتبة (mattress):</b> لقلب الحواف والجروح المشدودة. <b>تحت الأدمة (subcuticular):</b> تجميليّة. <b>الآن: افهمها معرفيّاً · الإتقان بالتكرار اليدويّ ومع الأقدم.</b>',ref:'مبادئ جراحية'},
+{id:'O6',mod:'O',type:'fact',front:'متى تُزال القُطَب حسب الموضع؟',back:'<b>الوجه: 3–5 أيام</b> (دوران ممتاز، الإزالة المبكّرة تقلّل الندبة) · <b>فروة الرأس/الذراعان: 7–10</b> · <b>الجذع: 10–14</b> · <b>الساقان: 10–14</b> · المفاصل/الظهر (شدّ عالٍ): حتى 14. تأكّد من التئام الحواف وغياب العدوى قبل الإزالة.',ref:'تدريس سريري معياري'},
+{id:'O7',mod:'O',type:'fact',front:'ما مبادئ تقييم وإغلاق الجرح؟',back:'<b>صنّف:</b> نظيف / ملوّث / متّسخ. <b>الإغلاق:</b> أوّليّ للنظيف الحديث · مؤجّل للملوّث. <b>اغسل بغزارة (irrigation).</b> <b>لا تُغلق أوّلياً:</b> العضّات، الجروح المتّسخة >6 ساعات، علامات العدوى. <b>لا تنسَ:</b> الوقاية من الكزاز (tetanus) وفحص إصابة الأوتار/الأعصاب/الأوعية تحت الجرح.',ref:'مبادئ جراحية'},
+{id:'OS1',mod:'O',type:'scenario',front:'جرح قطعيّ نظيف في الساعد، 4 سم، منذ ساعتين، بلا إصابة وترية/عصبيّة.',back:'',ref:'إصلاح جرح بسيط',steps:[
+  {q:'تقييمك قبل الإغلاق؟',a:'افحص الحركة/الحسّ/الأوعية تحت الجرح، اغسل بغزارة، تأكّد نظافته وحداثته (<6سا) → مرشّح للإغلاق الأوّليّ. تحقّق من الكزاز.'},
+  {q:'أيّ خيط وتقنية؟',a:'<b>غير ممتصّ أحاديّ 4-0</b> (Ethilon/Prolene)، <b>غرز منفصلة بسيطة</b>، بعد تخدير موضعيّ (احسب الجرعة القصوى — راجع F8/K5).'},
+  {q:'متى تُزال؟',a:'<b>7–10 أيام</b> (ذراع)، مع تعليمات العناية وعلامات العدوى.'},
+]},
+
+/* ===== P — الحروق (Burns) ===== */
+{id:'P1',mod:'P',type:'fact',danger:true,front:'ما أولويّة تقييم مريض الحرق، ولماذا المجرى أولاً؟',back:'<b>ABCDE</b> — والمجرى أولاً لأن <b>إصابة الاستنشاق (inhalation injury)</b> قد تسدّ المجرى بالوذمة سريعاً. علامات إنذار: حروق الوجه، شعر أنف محروق، سخام بلعوميّ، بحّة، صرير، حرق في مكان مغلق. <b>وجودها → أمّن المجرى مبكّراً (نادِ التخدير) قبل أن تستحيل الوذمة التنبيب</b> + أكسجين 100% (احذر أوّل أكسيد الكربون).',ref:'ABLS / ATLS'},
+{id:'P2',mod:'P',type:'fact',front:'كيف تقدّر مساحة الحرق (قاعدة التسعات للبالغ)؟',back:'<b>قاعدة التسعات (Wallace):</b> الرأس <b>9%</b> · كل ذراع <b>9%</b> · كل ساق <b>18%</b> · مقدّم الجذع <b>18%</b> · مؤخّره <b>18%</b> · العجان <b>1%</b>. <b>راحة كفّ المريض ≈ 1%</b> (للرقع المبعثرة). <b>احسب السميك الجزئيّ والكامل فقط</b> (لا الحمامى السطحيّة).',ref:'Rule of Nines (Wallace) / ABA'},
+{id:'P3',mod:'P',type:'fact',danger:true,front:'كيف تُنعش سوائل الحرق (Parkland)؟',back:'<b>Parkland: 4 مل × الوزن(كغ) × %TBSA</b> من Ringer لاكتات خلال 24 سا — <b>نصفها في أول 8 ساعات من وقت الحرق</b> (لا من الوصول)، والباقي خلال 16 سا. (اتّجاه حديث: بدء أخفض <b>2 مل/كغ/%</b> ثم معايرة.) <b>الأهمّ: عايِر حسب إخراج البول 0.5–1 مل/كغ/سا.</b>',ref:'Parkland / ABLS (modified Brooke 2 mL)'},
+{id:'P4',mod:'P',type:'fact',front:'ما درجات عمق الحرق؟',back:'<b>سطحيّ (epidermal):</b> أحمر مؤلم بلا فقاعات (كحرق الشمس) — لا يُحسب. <b>سميك جزئيّ سطحيّ:</b> فقاعات، رطب، مؤلم جداً، يبيضّ بالضغط. <b>سميك جزئيّ عميق:</b> أقلّ ألماً، ضعيف الابيضاض. <b>كامل السماكة:</b> جافّ، جلديّ، أبيض/متفحّم، <b>غير مؤلم</b> (تلف الأعصاب).',ref:'تصنيف عمق الحروق'},
+{id:'P5',mod:'P',type:'fact',front:'متى تحوّل لوحدة الحروق، وما خطر الحرق المحيطيّ؟',back:'<b>معايير التحويل (ABA):</b> سميك جزئيّ >10% TBSA · حروق الوجه/اليدين/القدمين/العجان/المفاصل الكبرى · أيّ حرق كامل السماكة · كهربائيّة/كيميائيّة/استنشاق · أعمار متطرّفة. <b>الحرق المحيطيّ كامل السماكة</b> (يطوّق طرفاً/الصدر) قد يسبّب متلازمة حجيريّة/إعاقة تنفّس → قد يلزم <b>شقّ الصِّماخ (escharotomy)</b> — تعرّف وصعّد.',ref:'ABA Referral Criteria'},
+{id:'P6',mod:'P',type:'fact',front:'ما الإسعاف الأوّليّ للحرق؟',back:'<b>ماء جارٍ فاتر 20 دقيقة خلال أوّل 3 ساعات</b> (يقلّل العمق والحاجة للترقيع) — <b>لا ثلج</b> (يفاقم الإصابة). أزل الملابس/الحليّ غير الملتصقة. غطِّ بـ<b>غشاء بلاستيكيّ نظيف (cling film) طولياً.</b> مسكّن وافٍ. تحقّق من الكزاز. لا تفقع الفقاعات عشوائياً.',ref:'ABLS / 20CRW first aid'},
+{id:'PS1',mod:'P',type:'scenario',danger:true,front:'رجل (70 كغ) أُصيب بحرق لهب في غرفة مغلقة: حروق بالوجه والصدر والذراعين، صوته أجشّ، سخام حول الأنف.',back:'',ref:'الحرق الكبير المبدئيّ',steps:[
+  {q:'أكبر خطر فوريّ؟',a:'<b>المجرى</b> — علامات استنشاق (وجه/سخام/بحّة). <b>أمّن المجرى مبكّراً (نادِ التخدير) + أكسجين 100%.</b> ثم ABCDE.'},
+  {q:'قدّر المساحة واحسب السوائل؟',a:'الوجه + مقدّم الصدر(جزء من 18) + ذراعان(9+9). افترض ~36%: <b>Parkland = 4×70×36 ≈ 10,080 مل/24سا</b>، نصفها (~5 لتر) في أول 8 سا من وقت الحرق. <b>عايِر بالبول.</b>'},
+  {q:'ثم؟',a:'مسكّن، تحقّق من الكزاز، غطِّ الحروق، <b>حوّل لوحدة الحروق</b> (وجه + استنشاق + >10%). راقب الحرق المحيطيّ.'},
+]},
+
+/* ===== Q — الأدوية الأساسية للمقيم ===== */
+{id:'Q1',mod:'Q',type:'fact',danger:true,front:'ما الوقاية الدوائيّة من الخثار الوريديّ (VTE prophylaxis)؟',back:'<b>Enoxaparin (LMWH) 40 مغ تحت الجلد مرّة يومياً</b> (إن CrCl ≥30). <b>قصور كلويّ شديد (CrCl 15–30): 20 مغ يومياً.</b> + <b>ميكانيكيّاً:</b> جوارب ضاغطة / IPC. <b>قبلها قيّم خطر النزف</b>، وأوقفها حول العمليّات حسب البروتوكول. كل مريض جراحيّ يُقيَّم له VTE.',ref:'NICE NG89 / BNF'},
+{id:'Q2',mod:'Q',type:'fact',danger:true,front:'كيف تعكس مضادّات التخثّر الشائعة؟',back:'<b>Warfarin:</b> أوقفه + <b>Vitamin K</b>؛ نزف خطير → <b>PCC</b> (مركّز عوامل البروثرومبين). <b>Heparin (UFH):</b> <b>Protamine</b> · LMWH: protamine جزئيّ. <b>DOACs:</b> dabigatran→idarucizumab، Xa→andexanet (يكفي وعيك بوجودها الآن). أي نزف على مُمَيَّع = أوقفه + ABCDE + <b>صعّد فوراً</b>.',ref:'BNF / مبادئ'},
+{id:'Q3',mod:'Q',type:'fact',front:'ما الصادّات الجراحيّة الشائعة ومبادئ استعمالها؟',back:'شائعة: <b>Co-amoxiclav</b> (واسع) · <b>Metronidazole</b> (لاهوائيّات/بطن) · <b>Gentamicin</b> (سلبيّات — <b>راقب الكلية والمستوى</b>) · <b>Ceftriaxone</b>. المبادئ: <b>تحقّق من التحسّس دائماً</b>، الإنتان خلال ساعة، ولا غنى عن <b>source control</b>.<br><b>الوقاية الجراحيّة المعياريّة:</b> جرعة واحدة <b>خلال 60د قبل الشقّ</b> — المعياريّ <b>Cefazolin 2غ</b> (± <b>Metronidazole</b> للقولون/اللاهوائيّات)؛ أعد الجرعة إن طالت العمليّة >4سا أو نزف كبير.',ref:'WHO/ASHP Surgical Prophylaxis',verify:'local'},
+{id:'Q4',mod:'Q',type:'fact',front:'ما أساسيّات تدبير السكّريّ حول العمليّة؟',back:'الصائم/غير المضبوط أو العمليّات الكبرى → قد يلزم <b>تسريب إنسولين متغيّر المعدّل (VRIII)</b> مع سوائل تحوي جلوكوز ومراقبة بوتاسيوم. <b>أوقف metformin</b> حول التصوير بالصبغة/الكبرى (خطر الحماض اللبنيّ) حسب البروتوكول. راقب سكّر الدم بكثرة. (راجع DKA — L4.)',ref:'JBDS / مبادئ حول العمليّة'},
+{id:'Q5',mod:'Q',type:'fact',danger:true,front:'ما قواعد سلامة الدواء التي لا تُكسَر، وما الأدوية عالية الخطورة؟',back:'<b>دائماً:</b> تحقّق من <b>التحسّس (allergy)</b> قبل أي وصفة، عدّل حسب <b>الكلية/الكبد</b>، افحص التداخلات. <b>عالية الخطورة (high-alert):</b> الإنسولين، الأفيونيّات، مضادّات التخثّر، <b>البوتاسيوم المركّز</b>. <b>أخطاء قاتلة:</b> <b>لا تُعطِ KCl دفعةً وريديّة أبداً</b>، وتأكّد من الطريق الصحيح. عند الشكّ — تحقّق واسأل الصيدليّ.',ref:'مبادئ سلامة الدواء / NPSA'},
+{id:'Q6',mod:'Q',type:'fact',front:'أيّ أدوية تتطلّب مراقبة مستوى/وظيفة (TDM)؟',back:'<b>Gentamicin/Vancomycin:</b> راقب <b>المستوى والوظيفة الكلويّة</b> (سُمّية كلويّة/سمعيّة). <b>Warfarin:</b> INR. <b>Digoxin/Lithium/Phenytoin:</b> مستويات دمويّة. <b>Insulin:</b> سكّر الدم. القاعدة: <b>دواء ضيّق النافذة العلاجيّة = راقبه.</b>',ref:'BNF / TDM'},
+{id:'QS1',mod:'Q',type:'scenario',danger:true,front:'مريضان: الأوّل على warfarin ويحتاج عمليّة مخطّطة، والثاني ينزف وهو على enoxaparin.',back:'',ref:'تدبير المُمَيَّعات',steps:[
+  {q:'warfarin قبل عمليّة مخطّطة؟',a:'أوقفه مسبقاً حسب البروتوكول، تحقّق <b>INR</b>، قد يلزم <b>جسر (bridging)</b> بـ LMWH حسب الخطر — <b>استشر/صعّد</b>.'},
+  {q:'نزف على enoxaparin؟',a:'أوقفه، ABCDE، إنعاش، <b>Protamine</b> (عكس جزئيّ)، <b>صعّد فوراً</b>.'},
+  {q:'القاعدة العامّة؟',a:'كل مُمَيَّع = <b>وازن خطر النزف مقابل الخثار</b>، اتبع البروتوكول، ولا تتردّد في التصعيد/استشارة أمراض الدم.'},
+]},
+];
+
+/* «الأرقام التي لا مجال للخطأ فيها» — النواة الحرجة عالمياً (تُراجَع يومياً). تُعلَّم مرّة واحدة هنا. */
+const CRIT_IDS = ['A2','A3','B1','B2','B3','B5','B6','C2','C3','D2','D3','D4','E2','E3','F1','F5','F6','F7','F8','F9','G9','L4','L6','P1','P3','Q1','Q5'];
+(function(){ const s=new Set(CRIT_IDS); CARDS.forEach(c=>{ if(s.has(c.id)) c.crit=true; }); })();
+
+/* عكّازات ذاكرة (💡) — حِيَل تثبيت للأخطر والأكثر التباساً */
+const TIPS = {
+  B1:'سرعة <b>100–120</b>، عمق <b>5–6</b> سم — على إيقاع أغنية «Stayin\' Alive».',
+  B2:'تذكّر الفرق القاتل: في <b>التوقّف أدرينالين وريديّ</b> مركّز (1:10,000)، وفي <b>التأق عضليّ</b> بالفخذ (1:1000). القلب الواقف يحتاج الوريد مباشرةً، والحساسيّة تحتاج العضلة.',
+  D2:'لا تعكسهما أبداً: <b>تأق = IM فخذ (1:1000)</b> · <b>توقّف = IV (1:10,000)</b>.',
+  C2:'<b>Sepsis Six = ٣ تأخذ + ٣ تعطي.</b> تأخذ: زرع · لاكتات · بول. تعطي: أكسجين · سوائل · صادّ.',
+  E2:'فرط البوتاسيوم: <b>احمِ → انقل → تخلّص</b>. Calcium درعُ القلب، Insulin+جلوكوز يدفع البوتاسيوم داخلاً، ثم عالج السبب.',
+  F8:'<b>1% = 10 مغ/مل</b> (انقل الفاصلة منزلة). مريض 60كغ: ليدوكايين 3مغ/كغ = 180مغ = 18مل من 1%.',
+  P2:'قاعدة التسعات: الرأس 9 · كل ذراع 9 · كل ساق 18 · كل وجه للجذع 18 · العجان 1. <b>الساق ضِعف الذراع.</b>',
+  P3:'<b>Parkland = 4 × الوزن(كغ) × %المساحة</b>، نصفها في أول 8 ساعات من وقت الحرق.',
+  Q5:'القاعدة الذهبيّة: <b>لا KCl دفعةً وريديّة أبداً</b>، وتحقّق من التحسّس قبل أي وصفة.',
+};
+(function(){ CARDS.forEach(c=>{ if(TIPS[c.id]) c.tip=TIPS[c.id]; }); })();
+function tnote(c){ return c.tip ? '<div class="tnote">💡 '+c.tip+'</div>' : ''; }
+
+
+/* ====================== التخزين (يعمل في كل البيئات) ====================== */
+const Store = (()=> {
+  const mem = {};
+  const hasWS = (typeof window!=='undefined' && window.storage && typeof window.storage.get==='function');
+  let hasLS=false; try{ const k='__t'; localStorage.setItem(k,'1'); localStorage.removeItem(k); hasLS=true; }catch(e){ hasLS=false; }
+  return {
+    async get(key){
+      try{
+        if(hasWS){ const r=await window.storage.get(key); return r? r.value : (key in mem? mem[key]:null); }
+        if(hasLS){ return localStorage.getItem(key); }
+        return key in mem? mem[key]:null;
+      }catch(e){ return key in mem? mem[key]:null; }
+    },
+    async set(key,val){
+      try{
+        if(hasWS){ await window.storage.set(key,val); return; }
+        if(hasLS){ localStorage.setItem(key,val); return; }
+        mem[key]=val;
+      }catch(e){ mem[key]=val; }
+    }
+  };
+})();
+const SKEY='inqath_srs_v1', TKEY='inqath_theme_v1', PKEY='inqath_planstart_v1', DKEY='inqath_studydays_v1', CKEY='inqath_tasks_v1';
+let curTasks=[], curDay=1, taskState={};
+function todayKey(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function recordStudy(){ const t=todayKey(); if(!studyDays.includes(t)){ studyDays.push(t); Store.set(DKEY, JSON.stringify(studyDays)); } }
+function streakCount(){
+  if(!studyDays.length) return 0;
+  const set=new Set(studyDays); let n=0; const d=new Date();
+  // اسمح ببدء العدّ من اليوم أو الأمس
+  let k=todayKey(); if(!set.has(k)){ d.setDate(d.getDate()-1); k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); if(!set.has(k)) return 0; }
+  while(set.has(k)){ n++; d.setDate(d.getDate()-1); k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  return n;
+}
+function masteredPct(){ const facts=CARDS.filter(c=>c.type==='fact'); if(!facts.length) return 0; const m=facts.filter(c=>{ const s=SRS[c.id]; return s && s.reps>=2; }).length; return Math.round(m/facts.length*100); }
+function planDay(){ if(!planStart) return null; const ms=Date.now()-planStart; return Math.floor(ms/DAY)+1; }
+
+/* ====================== جدولة SM-2 المبسّطة (sprint 14 يوماً) ====================== */
+const DAY=86400000, CAP=9; // سقف الفاصل 9 أيام
+let SRS={}; // {id:{ef,interval,reps,due,lapses}}
+function dft(){ return {ef:2.5,interval:0,reps:0,due:Date.now(),lapses:0}; }
+function schedule(id,grade){ // grade: 0 again,1 hard,2 good,3 easy
+  const s = SRS[id] || dft();
+  if(grade===0){ s.ef=Math.max(1.3,s.ef-0.2); s.reps=0; s.interval=0; s.lapses++; s.due=Date.now()+60000; }
+  else if(grade===1){ s.ef=Math.max(1.3,s.ef-0.15); s.interval = s.reps===0? 0.007 : Math.min(CAP, s.interval*1.2); s.reps=Math.max(1,s.reps); s.due=Date.now()+s.interval*DAY; }
+  else if(grade===2){ s.interval = s.reps===0?1 : s.reps===1?3 : Math.min(CAP, Math.round(s.interval*s.ef)); s.reps++; s.due=Date.now()+s.interval*DAY; }
+  else { s.ef+=0.1; s.interval = s.reps===0?2 : Math.min(CAP, Math.round(s.interval*s.ef*1.3)); s.reps++; s.due=Date.now()+s.interval*DAY; }
+  SRS[id]=s; Store.set(SKEY, JSON.stringify(SRS));
+}
+function isDue(id){ const s=SRS[id]; return !s || s.due<=Date.now(); }
+function dueCount(){ return CARDS.filter(c=>c.type==='fact' && isDue(c.id)).length; }
+
+/* ====================== الحالة ====================== */
+let mode='plan', moduleFilter='all', queue=[], qi=0, flipped=false, scnIdx=0, crisisSel=null, planStart=null, studyDays=[];
+
+const $=s=>document.querySelector(s), app=$('#app');
+function modCards(types){ return CARDS.filter(c=> (moduleFilter==='all'|| (moduleFilter==='crit'? c.crit : c.mod===moduleFilter)) && types.includes(c.type)); }
+function critCards(){ return CARDS.filter(c=>c.crit && c.type==='fact'); }
+/* تذكير: بطاقة مملوءة بالمعيار العالميّ تنتظر تأكيد بروتوكول المستشفى */
+function vnote(c){ return (c.verify && c.verify!=='ok') ? '<div class="vnote">⚠ قيمة معياريّة عالميّة — <b>تحقّق من بروتوكول مستشفاك لاحقاً</b> (مهمّة تحقّق محفوظة لك).</div>' : ''; }
+function verifyList(){ return CARDS.filter(c=>c.verify && c.verify!=='ok'); }
+function esc(){} 
+
+/* ====================== العرض ====================== */
+function renderChips(){
+  const visible = MODULES.filter(m=>{
+    if(m.id==='all') return true;
+    const types = mode==='scenarios'?['scenario']:['fact'];
+    return CARDS.some(c=>c.mod===m.id && (mode==='ref'? true : types.includes(c.type)));
+  });
+  $('#chips').innerHTML = visible.map(m=>`<button class="chip" data-mod="${m.id}" aria-pressed="${moduleFilter===m.id}">${m.danger?'🔴 ':''}${m.name}</button>`).join('');
+}
+function setDuePill(){ $('#duepill').innerHTML='مستحقّ: <b>'+dueCount()+'</b>'; }
+
+function buildQueue(){
+  if(mode==='review'){ queue = modCards(['fact']).filter(c=>isDue(c.id)); }
+  else if(mode==='quiz'){ queue = shuffle(modCards(['fact']).slice()); }
+  else if(mode==='scenarios'){ queue = modCards(['scenario']); }
+  qi=0; flipped=false; scnIdx=0;
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function render(){
+  setDuePill();
+  if(mode==='emergency'){ return renderEmergency(); }
+  if(mode==='plan'){ return renderPlan(); }
+  if(mode==='ref'){ return renderRef(); }
+  if(mode==='scenarios'){ return renderScenario(); }
+  // review / quiz
+  if(!queue.length || qi>=queue.length){
+    if(mode==='review'){
+      app.innerHTML = `<div class="empty"><div class="big">✓</div><h3>لا بطاقات مستحقّة الآن</h3><p>أنهيت مراجعة هذه الوحدة. عُد لاحقاً، أو جرّب وضع «اختبار» للتكرار المكثّف، أو بدّل الوحدة.</p><button class="btn" onclick="switchMode('quiz')">ابدأ تكراراً مكثّفاً ⚡</button></div>`;
+    } else {
+      app.innerHTML = `<div class="empty"><div class="big">⚡</div><h3>انتهت الجولة</h3><p>راجعت كل بطاقات هذه الوحدة.</p><button class="btn" onclick="buildQueue();render()">جولة جديدة</button></div>`;
+    }
+    return;
+  }
+  const c = queue[qi];
+  const mod = MODULES.find(m=>m.id===c.mod);
+  const pct = Math.round((qi/queue.length)*100);
+  app.innerHTML = `
+    <div class="prog"><i style="width:${pct}%"></i></div>
+    <div class="stage">
+      <div class="card ${c.danger?'danger':''} ${flipped?'flip':''}" id="card">
+        <div class="face front">
+          <div class="tagrow"><span class="tag ${c.danger?'red':''}">${c.danger?'🔴 ':''}${mod.name}</span><span class="tag" style="background:rgba(255,255,255,.05);color:var(--faint);border-color:var(--line)">${c.id}</span></div>
+          <div class="qlabel">سؤال</div>
+          <div class="front-q">${c.front}</div>
+          <div class="fliphint">انقر للكشف عن الإجابة</div>
+        </div>
+        <div class="face back">
+          <div class="qlabel">الإجابة</div>
+          <div class="back-a">${c.back}</div>
+          <div class="ref"><b>المصدر:</b> ${c.ref}</div>
+          ${tnote(c)}${vnote(c)}
+        </div>
+      </div>
+    </div>
+    ${flipped? `<div class="rate">
+        <button class="rb again" onclick="rate(0)">من جديد<small>دقيقة</small></button>
+        <button class="rb hard" onclick="rate(1)">صعب<small>قريباً</small></button>
+        <button class="rb good" onclick="rate(2)">جيّد<small>أيام</small></button>
+        <button class="rb easy" onclick="rate(3)">سهل<small>أطول</small></button>
+      </div>` : `<div style="text-align:center;color:var(--faint);font-size:.8rem;margin-bottom:10px">${qi+1} / ${queue.length}</div>`}
+  `;
+  $('#card').onclick = ()=>{ flipped=!flipped; render(); };
+}
+
+function rate(g){
+  const c=queue[qi];
+  if(mode==='review'){
+    schedule(c.id,g);
+    recordStudy();
+    if(g===0){ queue.push(c); } // أعِد البطاقة لنهاية الجولة
+  }
+  qi++; flipped=false; render();
+}
+
+function renderScenario(){
+  if(!queue.length){ app.innerHTML=`<div class="empty"><div class="big">🩺</div><h3>لا حالات في هذه الوحدة</h3><p>بدّل الوحدة لعرض الحالات المتاحة.</p></div>`; return; }
+  if(qi>=queue.length){ app.innerHTML=`<div class="empty"><div class="big">✓</div><h3>أنهيت كل الحالات</h3><button class="btn" onclick="qi=0;render()">من البداية</button></div>`; return; }
+  const c=queue[qi]; const mod=MODULES.find(m=>m.id===c.mod);
+  app.innerHTML = `
+    <div class="scn">
+      <div class="tagrow"><span class="tag ${c.danger?'red':''}">${c.danger?'🔴 ':''}${mod.name}</span><span class="tag" style="background:rgba(255,255,255,.05);color:var(--faint);border-color:var(--line)">حالة ${qi+1}/${queue.length}</span></div>
+      <div class="vignette"><b>السيناريو:</b> ${c.front}</div>
+      ${c.steps.map((st,i)=>`
+        <div class="step" id="st${i}">
+          <div class="sq" onclick="document.getElementById('st${i}').classList.toggle('open')"><span class="n">${i+1}.</span><span>${st.q}</span></div>
+          <div class="reveal">انقر لكشف النهج الصحيح ▾</div>
+          <div class="sa">${st.a}</div>
+        </div>`).join('')}
+      <div class="ref" style="margin-top:6px"><b>الإطار:</b> ${c.ref}</div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn" onclick="qi++;render()">الحالة التالية ←</button>
+        <button class="btn ghost" onclick="revealAll()">اكشف كل الخطوات</button>
+      </div>
+    </div>`;
+}
+function revealAll(){ document.querySelectorAll('.step').forEach(s=>s.classList.add('open')); }
+
+function renderRef(){
+  const mods = MODULES.filter(m=>m.id!=='all' && (moduleFilter==='all'||m.id===moduleFilter));
+  app.innerHTML = `<div class="searchbar"><input type="search" placeholder="🔎 ابحث في كل البطاقات..." oninput="filterRef(this.value)"></div><div class="title-sm">المرجع السريع — اقرأ دون جدولة</div>` + mods.map(m=>{
+    const cs = CARDS.filter(c=>c.mod===m.id);
+    return `<div class="acc" id="acc-${m.id}">
+      <div class="acc-h" onclick="document.getElementById('acc-${m.id}').classList.toggle('open')">${m.danger?'🔴 ':''}${m.name}<span class="cnt">${cs.length} بطاقة ▾</span></div>
+      <div class="acc-b">${cs.map(c=>`<div class="refcard"><div class="rq">${c.type==='scenario'?'🩺 ':''}${c.front}</div>${c.type==='fact'?`<div class="ra">${c.back}</div>`:`<div class="ra">${c.steps.map((s,i)=>`<div style="margin:4px 0"><b>${i+1}.</b> ${s.q}<br><span style="color:var(--faint)">↳ ${s.a}</span></div>`).join('')}</div>`}<div class="rs">${c.ref}</div>${tnote(c)}${vnote(c)}</div>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ====================== الطوارئ ====================== */
+function cardById(id){ return CARDS.find(c=>c.id===id); }
+function openCrisis(id){ crisisSel=id; render(); window.scrollTo(0,0); }
+function renderEmergency(){
+  $('#chips').innerHTML='';
+  if(!crisisSel){
+    app.innerHTML = `<div class="crisis-intro"><b>وضع الطوارئ.</b> اختر الموقف فيظهر البروتوكول فوراً (دون تقليب). <b>نادِ المساعدة مبكّراً</b> — التصعيد قوّة لا ضعف. تذكير تعليميّ، والأخصائيّ وبروتوكول مستشفاك يعلوان عليه.</div>
+      <div class="cgrid">${CRISES.map(cr=>`<button class="ctile" onclick="openCrisis('${cr.id}')"><span class="ci">${cr.icon}</span><span class="ct">${cr.title}</span><span class="cs">${cr.sub}</span></button>`).join('')}</div>`;
+    return;
+  }
+  const cr=CRISES.find(c=>c.id===crisisSel);
+  const blocks = cr.cards.map(id=>{ const c=cardById(id); if(!c) return ''; return `<div class="pblock"><div class="pq">${c.front}</div><div class="pa">${c.back}</div><div style="font-size:.68rem;color:var(--faint);margin-top:8px">${c.ref}</div>${tnote(c)}</div>`; }).join('');
+  const sbar = cr.sbar ? sbarHTML() : '';
+  const scen = cr.scen ? (()=>{ const s=cardById(cr.scen); if(!s||!s.steps) return ''; return `<div class="title-sm">حالة تدريبيّة</div><div class="pblock"><div class="pq">🩺 ${s.front}</div><div class="pa">${s.steps.map((st,i)=>`<div style="margin:6px 0"><b>${i+1}. ${st.q}</b><br><span style="color:var(--muted)">↳ ${st.a}</span></div>`).join('')}</div></div>`; })() : '';
+  app.innerHTML = `<button class="backbtn" onclick="crisisSel=null;render();window.scrollTo(0,0)">← كل الطوارئ</button>
+    <div class="crisis-title">${cr.icon} ${cr.title}</div>
+    ${blocks}${sbar}${scen}`;
+}
+function sbarHTML(){
+  return `<div class="title-sm">مساعد التصعيد — SBAR (املأه أثناء الاتصال)</div>
+   <div class="sbar">
+     <label>S — الموقف (من أنت + المريض + ما يقلقك)</label><textarea id="sb_s" placeholder="د. [اسمك]، عندي مريض في جناح [..]، [العمر]، أشعر بقلق لأن..."></textarea>
+     <label>B — الخلفية (التشخيص/العملية/المشكلة)</label><textarea id="sb_b" placeholder="التشخيص/العملية، تاريخ مختصر، أدوية مهمّة..."></textarea>
+     <label>A — التقييم (العلامات + ABCDE + حدسك)</label><textarea id="sb_a" placeholder="العلامات الحيوية، نتائج ABCDE، lactate/سكّر، «أنا قلق على هذا المريض»"></textarea>
+     <label>R — الطلب (ماذا تريد منه الآن)</label><textarea id="sb_r" placeholder="أحتاج أن تأتي تراه الآن / ماذا تنصح؟"></textarea>
+     <button class="btn" onclick="buildSbar()">اعرض نصّ المكالمة</button>
+     <pre id="sb_out" style="display:none"></pre>
+   </div>`;
+}
+function buildSbar(){
+  const g=id=>{ const el=document.getElementById(id); return (el&&el.value||'').trim(); };
+  const s=g('sb_s'),b=g('sb_b'),a=g('sb_a'),r=g('sb_r');
+  const out=document.getElementById('sb_out'); if(!out) return;
+  out.style.display='block';
+  out.textContent =
+    'السلام عليكم، أتصل لأصعّد حالة مريض.\n\n'+
+    'S — الموقف: '+(s||'—')+'\n\n'+
+    'B — الخلفية: '+(b||'—')+'\n\n'+
+    'A — التقييم: '+(a||'—')+((a.indexOf('قلق')>-1)?'':'\n— وأنا قلق على هذا المريض.')+'\n\n'+
+    'R — الطلب: '+(r||'أحتاج تقييمك الآن.');
+}
+
+/* ====================== الخطة + التقدّم ====================== */
+function startPlanToday(){ const d=new Date(); d.setHours(0,0,0,0); planStart=d.getTime(); Store.set(PKEY,String(planStart)); render(); }
+function startPlanDate(v){ if(!v) return; const d=new Date(v); d.setHours(0,0,0,0); planStart=d.getTime(); Store.set(PKEY,String(planStart)); render(); }
+function resetPlan(){ planStart=null; Store.set(PKEY,''); render(); }
+/* مهام اليوم — تُبنى من الخطة + المراجعة اليوميّة الثابتة */
+function dayTasks(p){
+  const t=[];
+  t.push({ic:'🎯', tx:'راجع «الأرقام التي لا تُخطئ فيها» ('+critCards().length+')', go:'crit'});
+  t.push({ic:'♻️', tx:'راجع المستحقّ اليوم ('+dueCount()+' بطاقة)', go:'review'});
+  p.mods.forEach(m=>{ const mm=MODULES.find(x=>x.id===m); t.push({ic:'📖', tx:'افهم وثبّت وحدة: '+(mm?mm.name:m), go:'mod:'+m}); });
+  if(CARDS.some(c=>c.mod===p.mods[0] && c.type==='scenario')){ const mm=MODULES.find(x=>x.id===p.mods[0]); t.push({ic:'🩺', tx:'حلّ حالات: '+(mm?mm.name:p.mods[0]), go:'scn:'+p.mods[0]}); }
+  if(VID[p.d]) t.push({ic:'🎥', tx:'شاهد: '+VID[p.d], go:null});
+  if(p.hands) t.push({ic:'✋', tx:'تدرّب يدوياً: '+p.hands, go:null});
+  return t;
+}
+function isTaskDone(d,i){ return (taskState[d]||[]).includes(i); }
+function toggleTask(i){ const d=curDay; const a=taskState[d]||(taskState[d]=[]); const k=a.indexOf(i); if(k>=0)a.splice(k,1); else a.push(i); Store.set(CKEY,JSON.stringify(taskState)); renderPlan(); }
+function runTask(i){ const g=(curTasks[i]||{}).go; if(!g) return; if(g==='crit')startCriticals(); else if(g==='review')goReviewAll(); else if(g.indexOf('mod:')===0)goModule(g.slice(4)); else if(g.indexOf('scn:')===0)goScenarios(g.slice(4)); }
+function renderPlan(){
+  $('#chips').innerHTML='';
+  const day=planDay();
+  const dn = (day && day>=1 && day<=14)? day : (planStart? (day>14?14:1) : 1);
+  curDay = dn;
+  const p=PLAN[dn-1];
+  curTasks = dayTasks(p);
+  const doneN = curTasks.filter((_,i)=>isTaskDone(dn,i)).length;
+
+  const hello = `<div class="hello">${planStart? (day>14?'أكملت الـ14 يوماً 🎉 — رائع':'أنت في <span>اليوم '+day+'</span> من 14'):'أهلاً — لنبدأ خطّتك'}</div>`;
+  const stats = `<div class="stats">
+    <div class="stat"><div class="v">${dueCount()}</div><div class="l">مستحقّ اليوم</div></div>
+    <div class="stat"><div class="v">${masteredPct()}%</div><div class="l">متقَن</div></div>
+    <div class="stat"><div class="v">${streakCount()}</div><div class="l">يوم متتالٍ 🔥</div></div>
+  </div>`;
+  const critbar = `<div class="critbar" onclick="startCriticals()"><span class="ce">🎯</span><div class="ctx"><b>الأرقام التي لا تُخطئ فيها</b><small>${critCards().length} حقيقة حرِجة عالمياً — راجعها كل يوم حتى تصير منعكسة</small></div><span class="cgo">راجع الآن ←</span></div>`;
+  const datebar = !planStart
+    ? `<div class="datebar"><span>متى تبدأ خطة الـ14 يوماً؟</span><button class="btn" onclick="startPlanToday()">أبدأ اليوم</button><span style="color:var(--faint)">أو:</span><input type="date" id="planDate" onchange="startPlanDate(this.value)"></div>`
+    : `<div class="datebar"><span>📅 ${day>14?'أكملت الخطة':'اليوم '+day+' من 14'}</span><button class="btn ghost" onclick="resetPlan()">إعادة ضبط</button></div>`;
+  const todayCard = `<div class="today"><div class="tlabel">${planStart?'مهمّة اليوم':'ابدأ من'} · يوم ${p.d}${p.reflex?' · 🔴 منعكسات':''}</div>
+      <h3>${p.t}</h3>
+      <div class="focus">${p.focus}</div></div>`;
+  const checklist = `<div class="title-sm">مهام اليوم (${doneN}/${curTasks.length}) — أنجزها بالترتيب</div>
+    <div class="checklist">${curTasks.map((tk,i)=>{ const d=isTaskDone(dn,i); return `<div class="task ${d?'done':''}">
+      <div class="cb" onclick="toggleTask(${i})">✓</div>
+      <span class="ti2">${tk.ic}</span>
+      <span class="tx" onclick="${tk.go?`runTask(${i})`:`toggleTask(${i})`}">${tk.tx}</span>
+      ${tk.go?'<span class="arrow">انتقل ←</span>':''}
+    </div>`; }).join('')}</div>
+    ${doneN===curTasks.length?'<div class="daydone">✓ أنجزت مهام اليوم — أحسنت. نَم باكراً.</div>':''}`;
+  const list = `<div class="title-sm">الخطة الكاملة — 14 يوماً (انقر يوماً للدراسة)</div><div class="daylist">${PLAN.map(pp=>{
+    const done = day && pp.d<day; const cur = dn===pp.d;
+    return `<div class="dayrow ${cur?'cur':''} ${done?'done':''}" onclick="goModule('${pp.mods[0]}')"><div class="dn">${done?'✓':pp.d}</div><div><div class="dt">${pp.t}${pp.reflex?' 🔴':''}</div><div class="dd">${pp.mods.map(m=>{const mm=MODULES.find(x=>x.id===m);return mm?mm.name:m;}).join(' · ')}</div></div></div>`;
+  }).join('')}</div>`;
+  const tenbtn = `<div class="critbar" style="border-color:var(--accent-dim);background:linear-gradient(135deg,rgba(45,212,191,.13),rgba(45,212,191,.03))" onclick="startDaily()"><span class="ce">⏱️</span><div class="ctx"><b style="color:var(--accent)">جلسة ١٠ دقائق</b><small>جرعتك اليوميّة: مزيج من الأرقام الحرِجة + المستحقّ</small></div><span class="cgo" style="color:var(--accent)">ابدأ ←</span></div>`;
+  const leech = leechCards();
+  const leechbar = leech.length? `<div class="critbar" style="border-color:var(--amber);background:linear-gradient(135deg,rgba(245,185,127,.13),rgba(245,185,127,.03))" onclick="startLeeches()"><span class="ce">🔁</span><div class="ctx"><b style="color:var(--amber)">بطاقات عنيدة (${leech.length})</b><small>أخطأتها مراراً — ركّز عليها لتسدّ ثغراتك</small></div><span class="cgo" style="color:var(--amber)">راجعها ←</span></div>`:'';
+  const vbar = verifyList().length? `<div style="font-size:.78rem;color:var(--amber);margin:0 0 12px;padding:8px 12px;border:1px dashed rgba(245,185,127,.35);border-radius:10px">📌 <b>${verifyList().length}</b> بطاقات بقيمة معياريّة عالميّة تنتظر تأكيدك ببروتوكول مستشفاك — ستظهر منبّهة أثناء التمارين.</div>`:'';
+  app.innerHTML = hello + stats + critbar + tenbtn + leechbar + vbar + datebar + todayCard + checklist + list;
+}
+function filterRef(q){
+  q=(q||'').trim().toLowerCase();
+  document.querySelectorAll('#app .acc').forEach(acc=>{
+    let any=false;
+    acc.querySelectorAll('.refcard').forEach(rc=>{
+      const hit = !q || rc.textContent.toLowerCase().includes(q);
+      rc.style.display = hit?'':'none'; if(hit) any=true;
+    });
+    acc.style.display = any?'':'none';
+    if(q){ acc.classList.toggle('open', any); }
+  });
+}
+
+/* ====================== التنقّل ====================== */
+function switchMode(m){
+  mode=m;
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.mode===m));
+  if(m==='emergency'){ crisisSel=null; $('#chips').innerHTML=''; render(); return; }
+  if(m==='plan'){ $('#chips').innerHTML=''; render(); return; }
+  if(moduleFilter!=='all'){ const ok = CARDS.some(c=>c.mod===moduleFilter && (m==='scenarios'?c.type==='scenario':c.type==='fact')); if(!ok && m!=='ref') moduleFilter='all'; }
+  renderChips(); buildQueue(); render();
+}
+/* انتقال موجَّه من الخطة إلى مراجعة وحدة بعينها */
+function setTab(m){ document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.mode===m)); }
+function goModule(mod){ moduleFilter=mod; mode='review'; setTab('review'); renderChips(); buildQueue(); render(); window.scrollTo(0,0); }
+function goReviewAll(){ moduleFilter='all'; mode='review'; setTab('review'); renderChips(); buildQueue(); render(); window.scrollTo(0,0); }
+function goScenarios(mod){ moduleFilter=mod; mode='scenarios'; setTab('scenarios'); renderChips(); buildQueue(); render(); window.scrollTo(0,0); }
+function startCriticals(){ moduleFilter='crit'; mode='quiz'; setTab('quiz'); renderChips(); buildQueue(); render(); window.scrollTo(0,0); }
+/* البطاقات العنيدة (leech): أخطأتها 4 مرّات فأكثر */
+function leechCards(){ return CARDS.filter(c=>c.type==='fact' && ((SRS[c.id]&&SRS[c.id].lapses)||0)>=4); }
+function startLeeches(){ mode='review'; moduleFilter='all'; setTab('review'); $('#chips').innerHTML=''; queue=shuffle(leechCards().slice()); qi=0; flipped=false; render(); window.scrollTo(0,0); }
+/* جلسة 10 دقائق: مزيج مُركّز من الأرقام الحرِجة + المستحقّ (مُسقّفة) */
+function startDaily(){
+  mode='review'; moduleFilter='all'; setTab('review'); $('#chips').innerHTML='';
+  const critPick = shuffle(critCards().slice()).slice(0,8);
+  const due = CARDS.filter(c=>c.type==='fact' && !c.crit && isDue(c.id));
+  const duePick = shuffle(due.slice()).slice(0,10);
+  let q = critPick.concat(duePick);
+  if(!q.length) q = shuffle(critCards().slice()).slice(0,10);
+  queue = shuffle(q); qi=0; flipped=false; render(); window.scrollTo(0,0);
+}
+document.querySelectorAll('.tab').forEach(t=> t.onclick=()=>switchMode(t.dataset.mode));
+$('#chips').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; moduleFilter=b.dataset.mod; renderChips(); buildQueue(); render(); });
+
+/* السمة */
+$('#themeBtn').onclick = async ()=>{ const cur=document.documentElement.getAttribute('data-theme'); const nx=cur==='light'?'':'light'; document.documentElement.setAttribute('data-theme',nx); await Store.set(TKEY,nx); };
+
+/* keyboard: space=flip, 1-4=rate */
+document.addEventListener('keydown', e=>{
+  if(mode!=='review'&&mode!=='quiz') return;
+  if(e.code==='Space'){ e.preventDefault(); flipped=!flipped; render(); }
+  if(flipped && mode==='review' && ['1','2','3','4'].includes(e.key)){ rate(parseInt(e.key)-1); }
+});
+
+/* ====================== الإقلاع ====================== */
+(async function init(){
+  try{ const raw=await Store.get(SKEY); if(raw) SRS=JSON.parse(raw)||{}; }catch(e){ SRS={}; }
+  try{ const th=await Store.get(TKEY); if(th) document.documentElement.setAttribute('data-theme',th); }catch(e){}
+  try{ const ps=await Store.get(PKEY); if(ps) planStart=parseInt(ps)||null; }catch(e){}
+  try{ const sd=await Store.get(DKEY); if(sd) studyDays=JSON.parse(sd)||[]; }catch(e){}
+  try{ const ts=await Store.get(CKEY); if(ts) taskState=JSON.parse(ts)||{}; }catch(e){}
+  render(); setDuePill();
+})();
+</script>
+</body>
+</html>
