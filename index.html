@@ -833,6 +833,23 @@ const CARDS_EN = {
    {q:"What do you request and monitor?",a:"amylase/lipase, FBC, U&E, LFTs, Ca, glucose, CRP, lactate, VBG. Assess severity (Glasgow/APACHE/CRP at 48h) and monitor vitals and urine output."},
    {q:"Management?",a:"<b>Supportive:</b> generous IV fluids, analgesia, antiemetic, early feeding as tolerated, monitoring. <b>No routine antibiotics.</b> Escalate if severity/deterioration (may need HDU/ICU)."},
  ]},
+ // ===== الوحدة F (الناقصة) =====
+ F2:{front:"How do you calculate daily maintenance fluids?",back:"Water <b>25–30 mL/kg/day</b> + Na⁺/K⁺ ~<b>1 mmol/kg</b> + glucose <b>50–100 g/day</b>."},
+ F3:{front:"General (non-trauma) resuscitation fluid bolus?",back:"<b>250–500 mL</b> balanced crystalloid, then <b>reassess</b> (do not keep infusing without reassessing)."},
+ F4:{front:"Trauma fluids in ATLS 11 (2025)?",back:"<b>≤1 L</b> crystalloid then <b>blood</b>, with <b>permissive hypotension</b> until haemorrhage control. Minimise crystalloids."},
+ F10:{front:"Target urine output?",back:"<b>≥0.5 mL/kg/h</b>. Less = hypoperfusion / dehydration / blocked catheter until proven otherwise."},
+ F11:{front:"How do you calculate the mean arterial pressure (MAP)?",back:"<b>MAP = (SBP + 2×DBP) ÷ 3</b>. Target generally <b>≥65</b> mmHg for organ perfusion."},
+ F12:{front:"The four classes of haemorrhage (ATLS)?",back:"<b>I</b> &lt;15% (near normal) · <b>II</b> 15–30% (tachycardia + narrow pulse pressure) · <b>III</b> 30–40% (+ hypotension + confusion) · <b>IV</b> &gt;40% (life-threatening)."},
+ // ===== الوحدة L (الناقصة) =====
+ L1:{front:"The WHO analgesic ladder and safe morphine titration?",back:"<b>Step 1:</b> Paracetamol (1 g/6h, max 4 g/day) ± NSAID (caution: renal/ulcer/bleeding). <b>Steps 2–3:</b> opioids. <b>Morphine IV</b> titrated <b>1–2 mg</b> with respiratory monitoring. (Beware tramadol: interactions + lowers seizure threshold.)"},
+ L2:{front:"Common antiemetics, and when to avoid some?",back:"<b>Ondansetron</b> (caution: QT prolongation) · <b>Cyclizine</b> · <b>Metoclopramide</b> — <b>avoid in bowel obstruction</b> (prokinetic) <b>and in young patients</b> (extrapyramidal effects). Choose by cause and patient."},
+ L3:{front:"Timing of surgical vs sepsis antibiotics?",back:"<b>Surgical prophylaxis: within 60 min before incision</b> (usually a single dose). <b>Sepsis: broad-spectrum within 1 hour.</b> Key principle: <b>source control</b> — antibiotics alone are not enough. Follow your local protocol."},
+ L5:{front:"What do you do for a blood transfusion reaction?",back:"<b>Stop the transfusion immediately</b> + ABCDE + keep the line open with saline + check unit/patient identity + <b>escalate</b> and inform the blood bank. Any fever/rigors/dyspnoea/hypotension/back pain/dark urine during transfusion = a reaction until proven otherwise."},
+ LS1:{front:"A young diabetic: nausea and vomiting, deep rapid breathing, glucose 28, high ketones, acidosis.",steps:[
+   {q:"Your diagnosis and order of priorities?",a:"<b>DKA</b>. ABCDE. Order: <b>fluids (0.9% saline) first</b>, then insulin, with <b>potassium monitoring</b>."},
+   {q:"Insulin and potassium?",a:"<b>Fixed-rate insulin 0.1 unit/kg/h.</b> Add potassium to the fluids per level (it falls with insulin). Monitor ECG/level."},
+   {q:"When do you add glucose, and when to escalate?",a:"When <b>BG &lt; 14</b> add <b>10% dextrose</b>. Escalate to medics/ICU if severe (reduced consciousness, severe acidosis, potassium disturbance) and treat the precipitant."},
+ ]},
 };
 (function(){ CARDS.forEach(c=>{ const e=CARDS_EN[c.id]; if(e){ if(e.front)c.front_en=e.front; if(e.back)c.back_en=e.back; if(e.steps)c.steps_en=e.steps; } }); })();
 function STEPS(c){ return (lang==='en' && c.steps_en) ? c.steps_en : (c.steps||[]); }
