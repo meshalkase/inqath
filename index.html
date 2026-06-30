@@ -69,7 +69,22 @@ header{
 .note span{font-size:1rem; line-height:1.4}
 
 /* Tabs */
-.tabs{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0 16px}
+.tabs{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:6px 0 14px}
+/* الشريط الفرعيّ (ادرس/الخطة) */
+.subbar{display:flex; gap:6px; overflow-x:auto; padding:2px 0 12px; scrollbar-width:none}
+.subbar::-webkit-scrollbar{display:none}
+.subtab{flex:0 0 auto; background:var(--surface); border:1px solid var(--line); color:var(--muted); border-radius:10px; padding:8px 14px; font-size:.85rem; cursor:pointer; font-family:inherit; transition:.12s}
+.subtab.on{background:var(--accent); color:#04201c; border-color:var(--accent); font-weight:700}
+/* لوحة اليوم (Home) النظيفة */
+.homebtn{display:block; width:100%; background:linear-gradient(135deg,var(--accent),var(--accent-dim)); color:#04201c; border:none; border-radius:16px; padding:18px; font-size:1.15rem; font-weight:700; cursor:pointer; font-family:inherit; margin:4px 0 14px; box-shadow:0 14px 36px -16px rgba(45,212,191,.6)}
+.homebtn small{display:block; font-size:.78rem; font-weight:500; opacity:.85; margin-top:3px}
+.qarow{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px}
+.qabtn{background:var(--surface); border:1px solid var(--line2); color:var(--txt); border-radius:14px; padding:14px 6px; font-size:1.4rem; cursor:pointer; font-family:inherit; display:flex; flex-direction:column; align-items:center; gap:4px; transition:.12s}
+.qabtn span{font-size:.74rem; color:var(--muted)}
+.qabtn:hover{transform:translateY(-2px); border-color:var(--line2)}
+.qabtn.red{border-color:rgba(255,107,107,.35)} .qabtn.red span{color:var(--danger)}
+.qabtn.amber{border-color:rgba(245,185,127,.4)} .qabtn.amber span{color:var(--amber)}
+.hint{font-size:.84rem; color:var(--muted); background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:11px 14px; margin-top:4px}
 .tab{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 4px; text-align:center; cursor:pointer; transition:.15s; font-size:.8rem; color:var(--muted); font-weight:500}
 .tab .ti{display:block; font-size:1.1rem; margin-bottom:2px}
 .tab[aria-selected="true"]{background:linear-gradient(135deg,var(--surface2),var(--surface)); color:var(--txt); border-color:var(--accent-dim); box-shadow:0 0 0 1px var(--accent-dim) inset}
@@ -272,18 +287,16 @@ footer{text-align:center; color:var(--faint); font-size:.72rem; padding:18px 0 6
   <div class="note"><span>⚠︎</span><div>قيم وجرعات مرجعية للحفظ السريع، مُتحقَّق منها من مصادر موثوقة. <b>بروتوكول قسمك ومستشفاك والأخصائي يعلو على أي شيء هنا.</b> هذه أداة تدريب، لا بديل عن الإشراف.</div></div>
 
   <div class="tabs" role="tablist">
+    <div class="tab" data-mode="home" role="tab" aria-selected="true"><span class="ti">🏠</span>اليوم</div>
+    <div class="tab" data-mode="study" role="tab" aria-selected="false"><span class="ti">📚</span>ادرس</div>
     <div class="tab emerg" data-mode="emergency" role="tab" aria-selected="false"><span class="ti">🚨</span>طوارئ</div>
-    <div class="tab" data-mode="plan" role="tab" aria-selected="true"><span class="ti">🗓️</span>الخطة</div>
-    <div class="tab" data-mode="year" role="tab" aria-selected="false"><span class="ti">📅</span>السنة</div>
-    <div class="tab" data-mode="review" role="tab" aria-selected="false"><span class="ti">🔁</span>مراجعة</div>
-    <div class="tab" data-mode="scenarios" role="tab" aria-selected="false"><span class="ti">🩺</span>حالات</div>
-    <div class="tab" data-mode="quiz" role="tab" aria-selected="false"><span class="ti">⚡</span>اختبار</div>
-    <div class="tab" data-mode="ref" role="tab" aria-selected="false"><span class="ti">📊</span>مرجع</div>
+    <div class="tab" data-mode="plan" role="tab" aria-selected="false"><span class="ti">📅</span>الخطة</div>
   </div>
 
+  <div id="subbar" class="subbar"></div>
   <div id="chips" class="chips"></div>
   <div id="app"></div>
-  <footer>إنقاذ · مساعد نجاة المقيم · 🚨 طوارئ + 🗓️ خطة 14 يوم + 🔁 تكرار متباعد · يُحفظ تقدّمك على هذا الجهاز</footer>
+  <footer>إنقاذ · مساعد نجاة المقيم · 🏠 اليوم · 📚 ادرس · 🚨 طوارئ · 📅 الخطة · يعمل دون إنترنت ويحفظ تقدّمك</footer>
 </div>
 
 <script>
@@ -1048,7 +1061,9 @@ function isDue(id){ const s=SRS[id]; return !s || s.due<=Date.now(); }
 function dueCount(){ return CARDS.filter(c=>c.type==='fact' && isDue(c.id)).length; }
 
 /* ====================== الحالة ====================== */
-let mode='plan', moduleFilter='all', queue=[], qi=0, flipped=false, scnIdx=0, crisisSel=null, planStart=null, studyDays=[], lang='en';
+let mode='home', smode='review', planView='plan', moduleFilter='all', queue=[], qi=0, flipped=false, scnIdx=0, crisisSel=null, planStart=null, studyDays=[], lang='en';
+const SLAB={review:{a:'مراجعة',e:'Review'},scenarios:{a:'حالات',e:'Cases'},quiz:{a:'اختبار',e:'Quiz'},ref:{a:'مرجع',e:'Reference'}};
+const PLAB={plan:{a:'الخطة اليوميّة',e:'Daily plan'},year:{a:'منهج السنة',e:'Year matrix'}};
 /* اللغة: إنجليزيّ-أوّل مع ترجمة احتياطيّة للعربيّة */
 function T(c,f){ return (lang==='en' && c[f+'_en']) ? c[f+'_en'] : (c[f]||''); }
 function toggleLang(){ lang = (lang==='en'?'ar':'en'); Store.set('inqath_lang_v1',lang); updateLangBtn(); render(); }
@@ -1066,34 +1081,51 @@ function esc(){}
 function renderChips(){
   const visible = MODULES.filter(m=>{
     if(m.id==='all') return true;
-    const types = mode==='scenarios'?['scenario']:['fact'];
-    return CARDS.some(c=>c.mod===m.id && (mode==='ref'? true : types.includes(c.type)));
+    const types = smode==='scenarios'?['scenario']:['fact'];
+    return CARDS.some(c=>c.mod===m.id && (smode==='ref'? true : types.includes(c.type)));
   });
   $('#chips').innerHTML = visible.map(m=>`<button class="chip" data-mod="${m.id}" aria-pressed="${moduleFilter===m.id}">${m.danger?'🔴 ':''}${m.name}</button>`).join('');
 }
+/* الشريط الفرعيّ + إظهار/إخفاء عناصر التنقّل حسب التبويب */
+function updateChrome(){
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.mode===mode));
+  const sub=$('#subbar'), chips=$('#chips');
+  if(mode==='study'){
+    sub.innerHTML = ['review','scenarios','quiz','ref'].map(s=>`<button class="subtab ${smode===s?'on':''}" onclick="setSmode('${s}')">${SLAB[s][lang==='en'?'e':'a']}</button>`).join('');
+    renderChips();
+  } else if(mode==='plan'){
+    sub.innerHTML = ['plan','year'].map(v=>`<button class="subtab ${planView===v?'on':''}" onclick="setPlanView('${v}')">${PLAB[v][lang==='en'?'e':'a']}</button>`).join('');
+    chips.innerHTML='';
+  } else { sub.innerHTML=''; chips.innerHTML=''; }
+}
+function setSmode(s){ smode=s; if(moduleFilter==='crit') moduleFilter='all'; if(s!=='ref') buildQueue(); render(); window.scrollTo(0,0); }
+function setPlanView(v){ planView=v; render(); window.scrollTo(0,0); }
 function setDuePill(){ $('#duepill').innerHTML='مستحقّ: <b>'+dueCount()+'</b>'; }
 
 function buildQueue(){
-  if(mode==='review'){ queue = modCards(['fact']).filter(c=>isDue(c.id)); }
-  else if(mode==='quiz'){ queue = shuffle(modCards(['fact']).slice()); }
-  else if(mode==='scenarios'){ queue = modCards(['scenario']); }
+  if(smode==='review'){ queue = modCards(['fact']).filter(c=>isDue(c.id)); }
+  else if(smode==='quiz'){ queue = shuffle(modCards(['fact']).slice()); }
+  else if(smode==='scenarios'){ queue = modCards(['scenario']); }
   qi=0; flipped=false; scnIdx=0;
 }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
 function render(){
-  setDuePill();
+  setDuePill(); updateChrome();
+  if(mode==='home'){ return renderHome(); }
   if(mode==='emergency'){ return renderEmergency(); }
-  if(mode==='plan'){ return renderPlan(); }
-  if(mode==='year'){ return renderYear(); }
-  if(mode==='ref'){ return renderRef(); }
-  if(mode==='scenarios'){ return renderScenario(); }
-  // review / quiz
+  if(mode==='plan'){ return planView==='year'? renderYear() : renderPlan(); }
+  // study:
+  if(smode==='ref'){ return renderRef(); }
+  if(smode==='scenarios'){ return renderScenario(); }
+  return renderCards();
+}
+function renderCards(){
   if(!queue.length || qi>=queue.length){
-    if(mode==='review'){
-      app.innerHTML = `<div class="empty"><div class="big">✓</div><h3>لا بطاقات مستحقّة الآن</h3><p>أنهيت مراجعة هذه الوحدة. عُد لاحقاً، أو جرّب وضع «اختبار» للتكرار المكثّف، أو بدّل الوحدة.</p><button class="btn" onclick="switchMode('quiz')">ابدأ تكراراً مكثّفاً ⚡</button></div>`;
+    if(smode==='review'){
+      app.innerHTML = `<div class="empty"><div class="big">✓</div><h3>${lang==='en'?'No cards due now':'لا بطاقات مستحقّة الآن'}</h3><p>${lang==='en'?'You finished this set. Try Quiz for cramming, or switch module.':'أنهيت مراجعة هذه الوحدة. جرّب «اختبار» للتكرار المكثّف، أو بدّل الوحدة.'}</p><button class="btn" onclick="setSmode('quiz')">${lang==='en'?'Cram ⚡':'تكرار مكثّف ⚡'}</button></div>`;
     } else {
-      app.innerHTML = `<div class="empty"><div class="big">⚡</div><h3>انتهت الجولة</h3><p>راجعت كل بطاقات هذه الوحدة.</p><button class="btn" onclick="buildQueue();render()">جولة جديدة</button></div>`;
+      app.innerHTML = `<div class="empty"><div class="big">⚡</div><h3>${lang==='en'?'Round complete':'انتهت الجولة'}</h3><p>${lang==='en'?'You reviewed all cards in this set.':'راجعت كل بطاقات هذه الوحدة.'}</p><button class="btn" onclick="buildQueue();render()">${lang==='en'?'New round':'جولة جديدة'}</button></div>`;
     }
     return;
   }
@@ -1131,7 +1163,7 @@ function render(){
 
 function rate(g){
   const c=queue[qi];
-  if(mode==='review'){
+  if(smode==='review'){
     schedule(c.id,g);
     recordStudy();
     if(g===0){ queue.push(c); } // أعِد البطاقة لنهاية الجولة
@@ -1233,6 +1265,25 @@ function dayTasks(p){
 function isTaskDone(d,i){ return (taskState[d]||[]).includes(i); }
 function toggleTask(i){ const d=curDay; const a=taskState[d]||(taskState[d]=[]); const k=a.indexOf(i); if(k>=0)a.splice(k,1); else a.push(i); Store.set(CKEY,JSON.stringify(taskState)); renderPlan(); }
 function runTask(i){ const g=(curTasks[i]||{}).go; if(!g) return; if(g==='crit')startCriticals(); else if(g==='review')goReviewAll(); else if(g.indexOf('mod:')===0)goModule(g.slice(4)); else if(g.indexOf('scn:')===0)goScenarios(g.slice(4)); }
+function renderHome(){
+  const en=lang==='en';
+  const day=planDay();
+  const dn=(day&&day>=1&&day<=14)?day:(planStart?(day>14?14:1):1);
+  const p=PLAN[dn-1];
+  const greet = en ? (planStart?(day>14?'You have completed the 14 days 🎉':'You are on <span>day '+day+'</span> of 14'):'Welcome — let us start') : (planStart?(day>14?'أكملت الـ14 يوماً 🎉':'أنت في <span>اليوم '+day+'</span> من 14'):'أهلاً — لنبدأ');
+  const stats = `<div class="stats"><div class="stat"><div class="v">${dueCount()}</div><div class="l">${en?'Due today':'مستحقّ اليوم'}</div></div><div class="stat"><div class="v">${masteredPct()}%</div><div class="l">${en?'Mastered':'متقَن'}</div></div><div class="stat"><div class="v">${streakCount()}</div><div class="l">${en?'Streak 🔥':'متتالٍ 🔥'}</div></div></div>`;
+  const start = `<button class="homebtn" onclick="startDaily()">⏱️ ${en?"Start today's session":'ابدأ جلسة اليوم'}<small>${en?'criticals + due cards · ~10 min':'الأرقام الحرِجة + المستحقّ · ~10 دقائق'}</small></button>`;
+  const leech=leechCards();
+  const qa = `<div class="qarow"><button class="qabtn" onclick="startCriticals()">🎯<span>${en?'Criticals':'الحرِجة'}</span></button>${leech.length?`<button class="qabtn amber" onclick="startLeeches()">🔁<span>${en?'Weak ('+leech.length+')':'العنيدة ('+leech.length+')'}</span></button>`:`<button class="qabtn" onclick="setPlanView('plan');switchMode('plan')">🗓️<span>${en?'Plan':'الخطة'}</span></button>`}<button class="qabtn red" onclick="switchMode('emergency')">🚨<span>${en?'Emergency':'طوارئ'}</span></button></div>`;
+  let body;
+  if(planStart){
+    body = `<div class="today"><div class="tlabel">${en?'Today · day '+dn:'مهمّة اليوم · يوم '+dn}${p.reflex?' · 🔴':''}</div><h3>${p.t}</h3><div class="focus">${p.focus}</div><div class="modgo">${p.mods.map(m=>{const mm=MODULES.find(x=>x.id===m);return `<button onclick="goModule('${m}')">${en?'Study':'ادرس'}: ${mm?mm.name:m} ←</button>`;}).join('')}</div></div>${p.hands?`<div class="hint">✋ ${p.hands}</div>`:''}`;
+  } else {
+    body = `<div class="datebar"><span>${en?'When do you start the 14-day plan?':'متى تبدأ خطة الـ14 يوماً؟'}</span><button class="btn" onclick="startPlanToday()">${en?'Start today':'أبدأ اليوم'}</button></div>`;
+  }
+  const vbar = verifyList().length? `<div style="font-size:.76rem;color:var(--amber);margin-top:12px;padding:8px 12px;border:1px dashed rgba(245,185,127,.35);border-radius:10px">📌 ${verifyList().length} ${en?'cards have a global-standard value awaiting your local protocol confirmation.':'بطاقات بقيمة معياريّة تنتظر تأكيدك ببروتوكول مستشفاك.'}</div>`:'';
+  app.innerHTML = `<div class="hello">${greet}</div>${stats}${start}${qa}${body}${vbar}`;
+}
 function renderPlan(){
   $('#chips').innerHTML='';
   const day=planDay();
@@ -1271,7 +1322,7 @@ function renderPlan(){
   const leech = leechCards();
   const leechbar = leech.length? `<div class="critbar" style="border-color:var(--amber);background:linear-gradient(135deg,rgba(245,185,127,.13),rgba(245,185,127,.03))" onclick="startLeeches()"><span class="ce">🔁</span><div class="ctx"><b style="color:var(--amber)">بطاقات عنيدة (${leech.length})</b><small>أخطأتها مراراً — ركّز عليها لتسدّ ثغراتك</small></div><span class="cgo" style="color:var(--amber)">راجعها ←</span></div>`:'';
   const vbar = verifyList().length? `<div style="font-size:.78rem;color:var(--amber);margin:0 0 12px;padding:8px 12px;border:1px dashed rgba(245,185,127,.35);border-radius:10px">📌 <b>${verifyList().length}</b> بطاقات بقيمة معياريّة عالميّة تنتظر تأكيدك ببروتوكول مستشفاك — ستظهر منبّهة أثناء التمارين.</div>`:'';
-  app.innerHTML = hello + stats + critbar + tenbtn + leechbar + vbar + datebar + todayCard + checklist + list;
+  app.innerHTML = datebar + vbar + todayCard + checklist + list;
 }
 /* ====================== وضع السنة ====================== */
 function maxPri(d){ if(d.items.some(i=>i.p==='high'))return 'high'; if(d.items.some(i=>i.p==='med'))return 'med'; return 'later'; }
@@ -1304,24 +1355,21 @@ function filterRef(q){
 /* ====================== التنقّل ====================== */
 function switchMode(m){
   mode=m;
-  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.mode===m));
-  if(m==='emergency'){ crisisSel=null; $('#chips').innerHTML=''; render(); return; }
-  if(m==='plan'||m==='year'){ $('#chips').innerHTML=''; render(); return; }
-  if(moduleFilter!=='all'){ const ok = CARDS.some(c=>c.mod===moduleFilter && (m==='scenarios'?c.type==='scenario':c.type==='fact')); if(!ok && m!=='ref') moduleFilter='all'; }
-  renderChips(); buildQueue(); render();
+  if(m==='emergency') crisisSel=null;
+  if(m==='study'){ if(moduleFilter==='crit') moduleFilter='all'; buildQueue(); }
+  render(); window.scrollTo(0,0);
 }
-/* انتقال موجَّه من الخطة إلى مراجعة وحدة بعينها */
-function setTab(m){ document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.mode===m)); }
-function goModule(mod){ moduleFilter=mod; mode='review'; setTab('review'); renderChips(); buildQueue(); render(); window.scrollTo(0,0); }
-function goReviewAll(){ moduleFilter='all'; mode='review'; setTab('review'); renderChips(); buildQueue(); render(); window.scrollTo(0,0); }
-function goScenarios(mod){ moduleFilter=mod; mode='scenarios'; setTab('scenarios'); renderChips(); buildQueue(); render(); window.scrollTo(0,0); }
-function startCriticals(){ moduleFilter='crit'; mode='quiz'; setTab('quiz'); renderChips(); buildQueue(); render(); window.scrollTo(0,0); }
+/* انتقال موجَّه (من اليوم/الخطة إلى وحدة بعينها) */
+function goModule(mod){ moduleFilter=mod; mode='study'; smode='review'; buildQueue(); render(); window.scrollTo(0,0); }
+function goReviewAll(){ moduleFilter='all'; mode='study'; smode='review'; buildQueue(); render(); window.scrollTo(0,0); }
+function goScenarios(mod){ moduleFilter=mod; mode='study'; smode='scenarios'; buildQueue(); render(); window.scrollTo(0,0); }
+function startCriticals(){ moduleFilter='crit'; mode='study'; smode='quiz'; buildQueue(); render(); window.scrollTo(0,0); }
 /* البطاقات العنيدة (leech): أخطأتها 4 مرّات فأكثر */
 function leechCards(){ return CARDS.filter(c=>c.type==='fact' && ((SRS[c.id]&&SRS[c.id].lapses)||0)>=4); }
-function startLeeches(){ mode='review'; moduleFilter='all'; setTab('review'); $('#chips').innerHTML=''; queue=shuffle(leechCards().slice()); qi=0; flipped=false; render(); window.scrollTo(0,0); }
+function startLeeches(){ mode='study'; smode='review'; moduleFilter='all'; queue=shuffle(leechCards().slice()); qi=0; flipped=false; render(); window.scrollTo(0,0); }
 /* جلسة 10 دقائق: مزيج مُركّز من الأرقام الحرِجة + المستحقّ (مُسقّفة) */
 function startDaily(){
-  mode='review'; moduleFilter='all'; setTab('review'); $('#chips').innerHTML='';
+  mode='study'; smode='review'; moduleFilter='all';
   const critPick = shuffle(critCards().slice()).slice(0,8);
   const due = CARDS.filter(c=>c.type==='fact' && !c.crit && isDue(c.id));
   const duePick = shuffle(due.slice()).slice(0,10);
@@ -1338,9 +1386,9 @@ $('#langBtn').onclick = ()=> toggleLang();
 
 /* keyboard: space=flip, 1-4=rate */
 document.addEventListener('keydown', e=>{
-  if(mode!=='review'&&mode!=='quiz') return;
+  if(mode!=='study' || smode==='ref' || smode==='scenarios') return;
   if(e.code==='Space'){ e.preventDefault(); flipped=!flipped; render(); }
-  if(flipped && mode==='review' && ['1','2','3','4'].includes(e.key)){ rate(parseInt(e.key)-1); }
+  if(flipped && smode==='review' && ['1','2','3','4'].includes(e.key)){ rate(parseInt(e.key)-1); }
 });
 
 /* ====================== الإقلاع ====================== */
