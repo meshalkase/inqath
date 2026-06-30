@@ -882,6 +882,41 @@ const CARDS_EN = {
    {q:"How do you speak up?",a:"<b>Graded assertiveness (CUS):</b> 'I'm very concerned, this is a safety issue — his obs are X, <b>I need you to come and see him now</b>.' If ignored → <b>escalate to someone more senior (Two-Challenge).</b>"},
    {q:"What do you do while waiting?",a:"<b>Hold the fort:</b> repeat ABCDE, oxygen/fluids/monitoring/IV access/bloods/ECG, delegate to the nurse, gather the notes, prepare SBAR, <b>and stay with the patient.</b>"},
  ]},
+ // ===== الوحدة I — انسداد/نزف/فتوق =====
+ I1:{front:"The four cardinal features of bowel obstruction, and SBO vs LBO?",back:"The four: <b>colicky pain · vomiting · distension · absolute constipation</b> (no faeces or flatus).<br><b>SBO</b> (small bowel): early vomiting, less distension — commonest causes <b>adhesions and hernias</b>.<br><b>LBO</b> (large bowel): greater distension, later vomiting — commonest cause <b>tumour</b>, then volvulus."},
+ I2:{front:"What turns bowel obstruction into a surgical emergency?",back:"Signs of <b>strangulation/ischaemia:</b> severe constant pain (not colicky), <b>acidosis & raised lactate</b>, fever, tachycardia, peritonism. = risk of dead bowel → <b>call the surgeon immediately</b>."},
+ I3:{front:"Initial management of bowel obstruction ('drip and suck')?",back:"<b>Drip</b> = IV fluids + electrolyte correction. <b>Suck</b> = NG tube to decompress and relieve vomiting. + NBM, catheter & fluid balance, analgesia, bloods, imaging (CT). Many adhesional SBO settle conservatively; <b>strangulation or failure = surgery</b>."},
+ I4:{front:"Upper GI bleed (UGIB): what is the priority?",back:"<b>Resuscitation first</b> (ABCDE, two large cannulae, bloods + cross-match, blood if needed) — before diagnosis. Then risk score (<b>Glasgow-Blatchford</b> pre-scope, <b>Rockall</b> post), <b>PPI</b>, and <b>therapeutic endoscopy within 24 h</b> (sooner if unstable)."},
+ I5:{front:"Variceal bleed: the special additions?",back:"On top of resuscitation: <b>Terlipressin</b> (splanchnic vasoconstrictor) + <b>prophylactic antibiotics</b> (reduce mortality/infection in cirrhosis) + urgent endoscopy (banding/sclerotherapy). Escalate to emergency/hepatology."},
+ I6:{front:"How are hernias classified by reducibility?",back:"<b>Reducible:</b> goes back with pressure — relatively reassuring. <b>Irreducible/incarcerated:</b> will not reduce, no ischaemia yet. <b>Obstructed:</b> contains obstructed bowel. <b>Strangulated:</b> + vascular ischaemia = emergency."},
+ I7:{front:"When is a hernia a surgical emergency, and what mistake to avoid?",back:"<b>Strangulated</b> = <b>painful + irreducible + overlying redness ± obstruction</b> → bowel ischaemia → <b>urgent surgery</b>. <b>Mistake:</b> forcibly reducing a strangulated hernia (may push dead bowel into the abdomen) — <b>call for help, do not force it</b>."},
+ IS1:{front:"Previous abdominal surgery: colicky pain, vomiting, distension, no bowel motion for 2 days. Then the pain becomes constant and severe with fever.",steps:[
+   {q:"Your diagnosis and its stage?",a:"<b>Small bowel obstruction (SBO)</b>, likely adhesional. Pain becoming constant + fever = <b>warning of strangulation</b>."},
+   {q:"Initial management?",a:"<b>Drip and suck:</b> fluids + NG + NBM + catheter. Bloods: FBC, U&E, <b>lactate/VBG</b>, G&S. CT imaging."},
+   {q:"The decisive step now?",a:"Signs of strangulation = <b>escalate to the surgeon immediately</b> — may need urgent laparotomy. Do not prolong conservative management on a strangulated bowel."},
+ ]},
+ IS2:{front:"A patient with liver cirrhosis vomits a large amount of fresh blood, HR 120, BP 88/56, pale.",steps:[
+   {q:"Your absolute priority?",a:"<b>Resuscitation (ABCDE)</b> — two large cannulae, bloods + cross-match, fluids/blood, oxygen. Unstable = do not wait for the diagnosis."},
+   {q:"What additions for likely varices?",a:"<b>Terlipressin + prophylactic antibiotics</b>, and prepare for <b>urgent endoscopy</b> (variceal banding)."},
+   {q:"Then?",a:"Escalate to emergency/hepatology/endoscopy, monitor the response and reassess. Risk-stratify with Glasgow-Blatchford/Rockall."},
+ ]},
+ // ===== الوحدة E (الناقصة) =====
+ E1:{front:"ECG changes of hyperkalaemia, in order?",back:"<b>Peaked T waves</b> → <b>widening QRS</b> → loss of <b>P waves</b> → <b>sine-wave</b> pattern → cardiac arrest."},
+ E4:{front:"Adjunctive treatment to lower potassium?",back:"<b>Salbutamol nebuliser 10–20 mg</b> (not as a sole treatment — some patients do not respond)."},
+ E5:{front:"Severity classification of hyperkalaemia?",back:"Moderate <b>6.0–6.4</b> mmol/L · severe <b>≥6.5</b> mmol/L (or any ECG changes/symptoms)."},
+ E6:{front:"Safe peripheral potassium replacement (hypokalaemia)?",back:"Maximum <b>10 mmol/h</b>, concentration <b>≤40 mmol/L</b> peripherally. Higher → central line + monitoring."},
+ ES1:{front:"A chronic kidney disease patient: K⁺ 7.1, ECG shows a wide QRS.",steps:[
+   {q:"First step (the most important)?",a:"<b>Calcium gluconate 10% 10 mL IV</b> immediately to protect the heart — ECG changes = emergency."},
+   {q:"Then to lower potassium?",a:"<b>Insulin 10 units + 25 g glucose IV</b> ± <b>Salbutamol nebuliser</b>. Monitor blood glucose."},
+   {q:"The definitive treatment?",a:"<b>Escalate to renal</b> — these are temporising measures; <b>dialysis</b> may be needed. Treat the cause."},
+ ]},
+ // ===== الوحدة K (الناقصة) =====
+ K1:{front:"Square knot vs granny knot, and why it matters?",back:"<b>Square (reef):</b> alternate the direction of each throw → holds, does not slip. <b>Granny:</b> two throws in the same direction → <b>slips and undoes — avoid it</b>. <b>Surgeon's knot:</b> a double first throw prevents slippage under tension."},
+ K2:{front:"How many throws, and what tying techniques?",back:"Throws: <b>~4 for braided</b>, <b>6–8 for monofilament</b>. Techniques: <b>two-handed tie</b> (the basis — master first), <b>instrument tie</b> (for suturing), <b>one-handed</b> (advanced). <b>✋ Practise by hand</b> on a shoelace/suture kit until automatic."},
+ K3:{front:"Stages of the WHO Surgical Safety Checklist?",back:"<b>Sign in</b> (before anaesthesia) · <b>Time out</b> (before incision — confirm identity/site/procedure) · <b>Sign out</b> (before leaving — count swabs and instruments). Prevents wrong-site/wrong-patient errors."},
+ K4:{front:"How do you confirm NG tube position before use?",back:"<b>First line: aspirate pH ≤ 5.5</b> = safe to use (excludes pulmonary placement). If not obtainable/in doubt → <b>CXR</b>. <b>Do not flush anything (feed/drug/water) before confirming position.</b> (Reminder: pH ≤4 increases confidence in gastric placement.)"},
+ K5:{front:"Maximum local anaesthetic doses and signs of toxicity?",back:"<b>Lidocaine 3 mg/kg</b> (<b>7 mg/kg</b> with adrenaline) · <b>Bupivacaine 2 mg/kg</b>. Reminder: 1% = 10 mg/mL. <b>LAST</b> (systemic toxicity): tinnitus, perioral numbness, seizures, arrhythmia → <b>stop injection, ABC, oxygen, Intralipid 20%</b>. (See F8/F9.)"},
+ K6:{front:"Which basic procedures should you master early?",back:"<b>IV cannulation</b> · <b>venepuncture</b> · <b>blood cultures (aseptic)</b> · <b>ABG</b> · <b>urinary catheter</b> · <b>NG tube</b>. <b>✋ Practise on manikins/simulators</b> in your centre and watch Geeky Medics (video + checklist for each)."},
 };
 (function(){ CARDS.forEach(c=>{ const e=CARDS_EN[c.id]; if(e){ if(e.front)c.front_en=e.front; if(e.back)c.back_en=e.back; if(e.steps)c.steps_en=e.steps; } }); })();
 function STEPS(c){ return (lang==='en' && c.steps_en) ? c.steps_en : (c.steps||[]); }
