@@ -761,8 +761,29 @@ const CARDS_EN = {
  P3:{front:"Burn fluid resuscitation (Parkland)?",back:"<b>4 mL × weight(kg) × %TBSA</b> Ringer\'s lactate / 24 h — <b>half in the first 8 hours from the time of the burn</b>. (Modern: start <b>2 mL/kg/%</b> then titrate.) <b>Titrate to urine 0.5–1 mL/kg/h.</b>"},
  Q1:{front:"Pharmacological VTE prophylaxis?",back:"<b>Enoxaparin 40 mg SC once daily</b> (CrCl ≥ 30). <b>Severe renal (CrCl 15–30): 20 mg daily.</b> Plus mechanical (stockings/IPC). <b>Assess bleeding risk</b>; hold around surgery per protocol."},
  Q5:{front:"Unbreakable drug-safety rules & high-alert drugs?",back:"<b>Always:</b> check <b>allergies</b>, adjust for <b>renal/hepatic</b>, check interactions. <b>High-alert:</b> insulin, opioids, anticoagulants, <b>concentrated potassium</b>. <b>Never give KCl as an IV bolus.</b> When in doubt, ask pharmacy."},
+ // ===== الوحدة B (الناقصة) =====
+ B4:{front:"First shock energy (biphasic)?",back:"<b>≥ 150 J</b> biphasic (130–150 J for a pulsed waveform), then escalate the energy on subsequent shocks if possible."},
+ B7:{front:"Unstable tachycardia (with adverse signs)?",back:"<b>Synchronized cardioversion</b> immediately (with sedation/anaesthesia if possible)."},
+ B8:{front:"Alternative to amiodarone if unavailable?",back:"<b>Lidocaine 100 mg IV</b>, with an additional <b>50 mg</b> after the 5th shock."},
+ BS1:{front:"A patient suddenly collapses on the ward.",steps:[
+   {q:"Your first steps?",a:"Ensure safety, check response & breathing, <b>call the resus team</b>, start <b>CPR 30:2</b> and attach the defibrillator immediately."},
+   {q:"The monitor shows VF. What do you do?",a:"<b>Shock (≥150 J)</b> then immediately resume CPR for 2 minutes without checking a pulse."},
+   {q:"Still in VF after the 3rd shock?",a:"Give <b>Adrenaline 1 mg IV + Amiodarone 300 mg IV</b>, continue shock/CPR cycles, repeat adrenaline every 3–5 min."},
+   {q:"What do you treat in parallel?",a:"<b>4H/4T</b> — correct hypoxia/hypovolaemia/hyperkalaemia, exclude tension pneumothorax or tamponade."},
+ ]},
+ // ===== الوحدة C (الناقصة) =====
+ C1:{front:"The quick qSOFA criterion for sepsis?",back:"<b>RR ≥ 22</b> · <b>SBP ≤ 100</b> · <b>altered mental state</b>. <b>≥ 2</b> = high risk. (Use NEWS2 as an alert too.)"},
+ C4:{front:"Resuscitation targets in sepsis?",back:"<b>MAP ≥ 65</b> · improving <b>lactate</b> · urine output <b>≥ 0.5</b> mL/kg/h."},
+ C5:{front:"Interpretation of lactate values?",back:"<b>&gt; 2</b> mmol/L concerning (hypoperfusion) · <b>&gt; 4</b> mmol/L serious (poor prognosis)."},
+ C6:{front:"The key principle after antibiotics in surgical sepsis?",back:"<b>Source control</b> — drain an abscess / remove an infected line / surgery. Antibiotics alone are not enough."},
+ CS1:{front:"Day 3 after a colectomy: HR 118, BP 95/60, temp 38.7, confused, low urine output.",steps:[
+   {q:"Your working diagnosis?",a:"<b>Sepsis</b> (likely intra-abdominal source / anastomotic leak) — start ABCDE."},
+   {q:"What do you do in the first hour?",a:"<b>Sepsis Six:</b> cultures before antibiotics, <b>broad-spectrum antibiotics within 1 hour</b>, lactate, <b>fluids 30 mL/kg</b>, measure urine, oxygen."},
+   {q:"The key surgical step?",a:"<b>Escalate to the senior</b> and consider <b>source control</b> (CT ± re-exploration). Tachycardia + fever + confusion on day 3–7 = anastomotic leak until proven otherwise."},
+ ]},
 };
-(function(){ CARDS.forEach(c=>{ if(CARDS_EN[c.id]){ c.front_en=CARDS_EN[c.id].front; c.back_en=CARDS_EN[c.id].back; } }); })();
+(function(){ CARDS.forEach(c=>{ const e=CARDS_EN[c.id]; if(e){ if(e.front)c.front_en=e.front; if(e.back)c.back_en=e.back; if(e.steps)c.steps_en=e.steps; } }); })();
+function STEPS(c){ return (lang==='en' && c.steps_en) ? c.steps_en : (c.steps||[]); }
 
 
 /* ====================== التخزين (يعمل في كل البيئات) ====================== */
@@ -916,11 +937,11 @@ function renderScenario(){
     <div class="scn">
       <div class="tagrow"><span class="tag ${c.danger?'red':''}">${c.danger?'🔴 ':''}${mod.name}</span><span class="tag" style="background:rgba(255,255,255,.05);color:var(--faint);border-color:var(--line)">حالة ${qi+1}/${queue.length}</span></div>
       <div class="vignette" dir="auto"><b>${lang==='en'?'Scenario:':'السيناريو:'}</b> ${T(c,'front')}</div>
-      ${c.steps.map((st,i)=>`
+      ${STEPS(c).map((st,i)=>`
         <div class="step" id="st${i}">
-          <div class="sq" onclick="document.getElementById('st${i}').classList.toggle('open')"><span class="n">${i+1}.</span><span>${st.q}</span></div>
-          <div class="reveal">انقر لكشف النهج الصحيح ▾</div>
-          <div class="sa">${st.a}</div>
+          <div class="sq" onclick="document.getElementById('st${i}').classList.toggle('open')"><span class="n">${i+1}.</span><span dir="auto">${st.q}</span></div>
+          <div class="reveal">${lang==='en'?'Tap to reveal the correct approach ▾':'انقر لكشف النهج الصحيح ▾'}</div>
+          <div class="sa" dir="auto">${st.a}</div>
         </div>`).join('')}
       <div class="ref" style="margin-top:6px"><b>الإطار:</b> ${c.ref}</div>
       <div style="display:flex;gap:8px;margin-top:14px">
@@ -937,7 +958,7 @@ function renderRef(){
     const cs = CARDS.filter(c=>c.mod===m.id);
     return `<div class="acc" id="acc-${m.id}">
       <div class="acc-h" onclick="document.getElementById('acc-${m.id}').classList.toggle('open')">${m.danger?'🔴 ':''}${m.name}<span class="cnt">${cs.length} بطاقة ▾</span></div>
-      <div class="acc-b">${cs.map(c=>`<div class="refcard"><div class="rq" dir="auto">${c.type==='scenario'?'🩺 ':''}${T(c,'front')}</div>${c.type==='fact'?`<div class="ra" dir="auto">${T(c,'back')}</div>`:`<div class="ra">${c.steps.map((s,i)=>`<div style="margin:4px 0"><b>${i+1}.</b> ${s.q}<br><span style="color:var(--faint)">↳ ${s.a}</span></div>`).join('')}</div>`}<div class="rs">${c.ref}</div>${tnote(c)}${vnote(c)}</div>`).join('')}</div>
+      <div class="acc-b">${cs.map(c=>`<div class="refcard"><div class="rq" dir="auto">${c.type==='scenario'?'🩺 ':''}${T(c,'front')}</div>${c.type==='fact'?`<div class="ra" dir="auto">${T(c,'back')}</div>`:`<div class="ra">${STEPS(c).map((s,i)=>`<div style="margin:4px 0" dir="auto"><b>${i+1}.</b> ${s.q}<br><span style="color:var(--faint)">↳ ${s.a}</span></div>`).join('')}</div>`}<div class="rs">${c.ref}</div>${tnote(c)}${vnote(c)}</div>`).join('')}</div>
     </div>`;
   }).join('');
 }
@@ -955,7 +976,7 @@ function renderEmergency(){
   const cr=CRISES.find(c=>c.id===crisisSel);
   const blocks = cr.cards.map(id=>{ const c=cardById(id); if(!c) return ''; return `<div class="pblock"><div class="pq" dir="auto">${T(c,'front')}</div><div class="pa" dir="auto">${T(c,'back')}</div><div style="font-size:.68rem;color:var(--faint);margin-top:8px">${c.ref}</div>${tnote(c)}</div>`; }).join('');
   const sbar = cr.sbar ? sbarHTML() : '';
-  const scen = cr.scen ? (()=>{ const s=cardById(cr.scen); if(!s||!s.steps) return ''; return `<div class="title-sm">حالة تدريبيّة</div><div class="pblock"><div class="pq">🩺 ${s.front}</div><div class="pa">${s.steps.map((st,i)=>`<div style="margin:6px 0"><b>${i+1}. ${st.q}</b><br><span style="color:var(--muted)">↳ ${st.a}</span></div>`).join('')}</div></div>`; })() : '';
+  const scen = cr.scen ? (()=>{ const s=cardById(cr.scen); if(!s||!s.steps) return ''; return `<div class="title-sm">${lang==='en'?'Practice scenario':'حالة تدريبيّة'}</div><div class="pblock"><div class="pq" dir="auto">🩺 ${T(s,'front')}</div><div class="pa">${STEPS(s).map((st,i)=>`<div style="margin:6px 0" dir="auto"><b>${i+1}. ${st.q}</b><br><span style="color:var(--muted)">↳ ${st.a}</span></div>`).join('')}</div></div>`; })() : '';
   app.innerHTML = `<button class="backbtn" onclick="crisisSel=null;render();window.scrollTo(0,0)">← كل الطوارئ</button>
     <div class="crisis-title">${cr.icon} ${cr.title}</div>
     ${blocks}${sbar}${scen}`;
