@@ -781,6 +781,25 @@ const CARDS_EN = {
    {q:"What do you do in the first hour?",a:"<b>Sepsis Six:</b> cultures before antibiotics, <b>broad-spectrum antibiotics within 1 hour</b>, lactate, <b>fluids 30 mL/kg</b>, measure urine, oxygen."},
    {q:"The key surgical step?",a:"<b>Escalate to the senior</b> and consider <b>source control</b> (CT ± re-exploration). Tachycardia + fever + confusion on day 3–7 = anastomotic leak until proven otherwise."},
  ]},
+ // ===== الوحدة D (الناقصة) =====
+ D1:{front:"How do you diagnose anaphylaxis clinically?",back:"<b>Sudden onset</b> + a problem in <b>A</b> and/or <b>B</b> and/or <b>C</b>, usually with skin/mucosal changes (flushing, urticaria, angioedema). Clinical diagnosis — do not wait for confirmation."},
+ D5:{front:"Fluid dose and patient positioning in anaphylaxis?",back:"Crystalloid bolus <b>500–1000 mL</b> (may repeat). Position: <b>lying flat with legs raised</b> — <b>prevent sudden standing/sitting</b> (can cause death from reduced venous return)."},
+ DS1:{front:"Minutes after starting an IV antibiotic: widespread rash, stridor, lip swelling, BP 80/50.",steps:[
+   {q:"Your immediate first step?",a:"<b>Adrenaline 0.5 mg IM</b> (0.5 mL of 1:1000) — first, before anything else. Stop the antibiotic, call for help."},
+   {q:"Then?",a:"High-flow oxygen, <b>fluids 500–1000 mL</b>, lie flat with legs raised."},
+   {q:"No improvement after 5 minutes?",a:"<b>Repeat IM adrenaline.</b> Antihistamines/steroids are <b>not</b> the priority."},
+ ]},
+ // ===== الوحدة A (الناقصة) =====
+ A1:{front:"What is the ABCDE approach, and its golden rule?",back:"<b>A</b> Airway · <b>B</b> Breathing · <b>C</b> Circulation · <b>D</b> Disability · <b>E</b> Exposure.<br>Rule: <b>treat the problem at each letter before moving to the next</b>, and reassess from the start with any deterioration."},
+ A4:{front:"The SBAR template for escalation / calling a senior?",back:"<b>S</b>ituation · <b>B</b>ackground · <b>A</b>ssessment (your read + 'I am worried about this patient') · <b>R</b>ecommendation/Request ('please come and see them now')."},
+ A5:{front:"Which vital signs demand immediate action and escalation?",back:"RR <b>&lt;8</b> or <b>&gt;25</b> · SpO₂ <b>&lt;92%</b> · SBP <b>&lt;90</b> · HR <b>&lt;40</b> or <b>&gt;130</b> · new drop in consciousness · low urine output."},
+ A6:{front:"When do you call the registrar / consultant?",back:"• Any ABCDE problem not improving with your initial action.<br>• Any 'never-miss' red flag.<br>• Your gut is worried despite acceptable numbers.<br>• A task beyond your competence.<br>• <b>You do not know what to do</b> (a sufficient and honourable reason)."},
+ AS1:{front:"A patient after abdominal surgery looks unwell and slightly confused.",steps:[
+   {q:"Vitals: RR 28, SpO₂ 90%, HR 122, BP 92/58. What is your framework?",a:"Start <b>ABCDE</b> immediately — unstable patient, do not treat a single symptom in isolation."},
+   {q:"A and B?",a:"Confirm the airway (is he talking?), give <b>high-flow oxygen</b> (non-rebreather 15 L/min) to raise SpO₂."},
+   {q:"C?",a:"<b>Two large-bore cannulae (16–18G)</b>, take bloods + cross-match + lactate, give a <b>250–500 mL crystalloid bolus</b> then reassess. Think bleeding first (check wound/drains)."},
+   {q:"The decisive step?",a:"<b>Escalate now via SBAR</b> — tachycardia + hypotension + confusion after surgery = bleeding/sepsis/PE until proven otherwise. Do not wait."},
+ ]},
 };
 (function(){ CARDS.forEach(c=>{ const e=CARDS_EN[c.id]; if(e){ if(e.front)c.front_en=e.front; if(e.back)c.back_en=e.back; if(e.steps)c.steps_en=e.steps; } }); })();
 function STEPS(c){ return (lang==='en' && c.steps_en) ? c.steps_en : (c.steps||[]); }
