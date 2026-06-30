@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d1b2a">
+<title>خريطة الطريق · من النجاة إلى البورد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1b2a; --bg2:#0a1623; --surface:#14253a; --surface2:#1b3149;
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --txt:#e9eef3; --muted:#9fb2c4; --faint:#6f8499;
+  --accent:#2dd4bf; --accent-dim:#1c8c80; --danger:#ff6b6b; --amber:#f5b97f; --good:#7fd1a3; --ortho:#b39ddb;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:radial-gradient(1200px 700px at 80% -10%, var(--bg2), var(--bg)) fixed, var(--bg); color:var(--txt);
+  font-family:'IBM Plex Sans Arabic','Tajawal',system-ui,-apple-system,Tahoma,sans-serif; line-height:1.75; padding-bottom:50px; -webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:linear-gradient(var(--bg),rgba(13,27,42,.6));border-bottom:1px solid var(--line)}
+.hbar{max-width:760px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(45,212,191,.16)}
+.hbar b{font-size:1.05rem} .hbar small{display:block;color:var(--faint);font-size:.72rem;margin-top:-2px}
+.num{color:var(--accent);font-weight:700}
+/* Dream */
+.dream{margin:18px 0;background:linear-gradient(135deg,rgba(45,212,191,.14),rgba(45,212,191,.03));border:1px solid var(--accent-dim);border-radius:18px;padding:20px}
+.dream .k{font-size:.74rem;color:var(--accent);letter-spacing:1px;font-weight:700}
+.dream h1{font-size:1.35rem;margin:6px 0 4px;line-height:1.5}
+.dream p{color:var(--muted);margin:0;font-size:.92rem}
+/* tracks legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.tr{font-size:.74rem;padding:5px 11px;border-radius:999px;border:1px solid var(--line2);color:var(--muted);display:flex;align-items:center;gap:6px}
+.tr i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.i-k{background:var(--good)} .i-e{background:var(--danger)} .i-o{background:var(--ortho)}
+/* timeline */
+.tl{position:relative;margin:10px 0 0;padding-inline-start:30px}
+.tl::before{content:"";position:absolute;inset-inline-start:9px;top:8px;bottom:18px;width:2px;background:linear-gradient(var(--accent-dim),var(--line))}
+.ph{position:relative;margin-bottom:16px}
+.ph::before{content:"";position:absolute;inset-inline-start:-26px;top:18px;width:16px;height:16px;border-radius:50%;background:var(--surface);border:3px solid var(--accent-dim)}
+.ph.done::before{background:var(--accent);border-color:var(--accent)}
+.ph.goal::before{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 5px rgba(245,185,127,.18)}
+.card{background:linear-gradient(160deg,var(--surface2),var(--surface));border:1px solid var(--line2);border-radius:16px;padding:16px 18px}
+.card .dur{font-size:.72rem;color:var(--faint);font-weight:600;letter-spacing:.5px}
+.card h3{margin:3px 0 4px;font-size:1.12rem}
+.card .focus{color:var(--muted);font-size:.9rem;margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.72rem;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted)}
+.chip.k{border-color:rgba(127,209,163,.35);color:var(--good)}
+.chip.e{border-color:rgba(255,107,107,.32);color:var(--danger)}
+.chip.o{border-color:rgba(179,157,219,.4);color:var(--ortho)}
+.badge{display:inline-block;font-size:.66rem;padding:2px 8px;border-radius:999px;font-weight:700;margin-inline-start:6px}
+.b-done{background:rgba(45,212,191,.15);color:var(--accent);border:1px solid var(--accent-dim)}
+.b-now{background:rgba(245,185,127,.15);color:var(--amber);border:1px solid rgba(245,185,127,.4)}
+.title-sm{font-size:.8rem;color:var(--faint);letter-spacing:.5px;margin:24px 0 8px}
+.ship{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:.9rem;color:var(--muted);line-height:1.9}
+.ship b{color:var(--txt)}
+.note{margin-top:16px;font-size:.78rem;color:var(--amber);background:rgba(245,185,127,.07);border:1px solid rgba(245,185,127,.28);border-radius:12px;padding:11px 14px}
+footer{text-align:center;color:var(--faint);font-size:.72rem;padding:22px 0 6px}
+</style>
+</head>
+<body>
+<header><div class="hbar"><span class="dot"></span><div><b>خريطة الطريق</b><small>من النجاة إلى البورد · مقيم جراحة سنة أولى</small></div></div></header>
+
+<div class="wrap">
+
+  <div class="dream">
+    <div class="k">🎯 الحلم</div>
+    <h1>جرّاح آمن يجتاز <span class="num">البورد الأردني (الجزء الأول)</span> و<span class="num">MRCS Part A</span></h1>
+    <p>وأساس متين لسنوات العظام القادمة — خطوة بخطوة، محوراً بمحور.</p>
+  </div>
+
+  <div class="legend">
+    <span class="tr"><i class="i-k"></i> المعرفة (بورد + MRCS)</span>
+    <span class="tr"><i class="i-e"></i> الطوارئ والمهارات</span>
+    <span class="tr"><i class="i-o"></i> أساسيات العظام</span>
+  </div>
+
+  <div class="tl">
+
+    <div class="ph done">
+      <div class="card">
+        <div class="dur">المرحلة 0 · الأسبوعان قبل أول يوم <span class="badge b-done">✓ منجز</span></div>
+        <h3>النجاة والأمان</h3>
+        <div class="focus">طبقة المنعكسات: تكون آمناً على القسم وتعرف متى تصعّد. (تطبيق إنقاذ — 139 بطاقة، ثنائيّ اللغة.)</div>
+        <div class="chips"><span class="chip e">ABCDE</span><span class="chip e">الصدمة</span><span class="chip e">ACLS</span><span class="chip e">الإنتان</span><span class="chip e">التأق</span><span class="chip e">البطن الحاد</span><span class="chip e">الأرقام الحرِجة</span></div>
+      </div>
+    </div>
+
+    <div class="ph now">
+      <div class="card">
+        <div class="dur">المرحلة 1 · الأشهر 1–3 <span class="badge b-now">أنت هنا قريباً</span></div>
+        <h3>التأسيس + الأمان على القسم</h3>
+        <div class="focus">الأولوية للعمل السريريّ. سجّل دورة <b>ATLS</b> مبكّراً (أعلى عائد). ابدأ بنك الأسئلة ببطء (10–20/يوم) + اقرأ عن كل حالة تراها.</div>
+        <div class="chips"><span class="chip e">ATLS</span><span class="chip e">الإجراءات العمليّة</span><span class="chip e">السوائل والكهارل</span><span class="chip e">ما بعد العملية</span><span class="chip o">مبادئ الكسور</span></div>
+      </div>
+    </div>
+
+    <div class="ph">
+      <div class="card">
+        <div class="dur">المرحلة 2 · الأشهر 4–6</div>
+        <h3>التغطية المنهجيّة للمعرفة</h3>
+        <div class="focus">ساعة–ساعتان/يوم. محاور MRCS العشرة بالتتابع: العلوم الأساسية التطبيقيّة + مبادئ الجراحة.</div>
+        <div class="chips"><span class="chip k">تشريح تطبيقيّ</span><span class="chip k">فسلجة</span><span class="chip k">باثولوجي</span><span class="chip k">أدوية</span><span class="chip k">مبادئ الجراحة</span><span class="chip k">الرعاية حول العملية</span><span class="chip o">طوارئ العظام</span></div>
+      </div>
+    </div>
+
+    <div class="ph">
+      <div class="card">
+        <div class="dur">المرحلة 3 · الأشهر 7–9</div>
+        <h3>مرحلة الأسئلة المكثّفة</h3>
+        <div class="focus">القلب النابض للنجاح: حلّ <b>~2000 سؤال</b> (Pastest + eMRCS) مع شرح كل خطأ + تكرار متباعد يستهدف نقاط ضعفك بالأرقام.</div>
+        <div class="chips"><span class="chip k">بنك أسئلة SBA/EMQ</span><span class="chip k">تكرار متباعد</span><span class="chip k">استهداف الضعف</span><span class="chip k">الأورام أساسيات</span></div>
+      </div>
+    </div>
+
+    <div class="ph goal">
+      <div class="card" style="border-color:rgba(245,185,127,.4)">
+        <div class="dur">المرحلة 4 · الأشهر 10–12 🎯</div>
+        <h3>وضع الامتحان → الحلم</h3>
+        <div class="focus">امتحانات تجريبيّة موقوتة بظروف حقيقيّة + مراجعة عالية العائد → اجتياز امتحان القسم ثم <b>البورد الجزء الأول / MRCS Part A</b>.</div>
+        <div class="chips"><span class="chip">Mocks موقوتة</span><span class="chip">مراجعة مكثّفة</span><span class="chip k">الامتحان ✦</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="title-sm">مسارٌ موازٍ طوال العام</div>
+  <div class="ship"><span class="chip o" style="margin-inline-end:6px">🦴 أساسيات العظام</span> جرعة خفيفة مستمرّة من <b>Apley & Solomon</b> (تشريح الأطراف · مبادئ الكسور · طوارئ العظام · AO) — تؤسّسك لسنوات العظام دون أن تثقل عام البورد.</div>
+
+  <div class="title-sm">كيف نتراكم شيئاً فشيئاً</div>
+  <div class="ship">
+    أبني المحتوى <b>محوراً بمحور</b> (بنك أسئلة JSON محايد) →<br>
+    • يخدمك <b>الآن</b> في تطبيق إنقاذ (مباشرةً).<br>
+    • ويُستورَد <b>لاحقاً</b> في <b>masar_surgery</b> (نسختك المفروعة من Masar).<br>
+    أنت <b>العميل الأول والمراجع</b> — كل دفعة تراجعها كطبيب، ونرسل تحديثات دوريّة. نتعلّم ونبني معاً.
+  </div>
+
+  <div class="note">⏱️ <b>المدّة المتوقّعة للحلم:</b> ~12 شهراً من بدء إقامتك حتى جلوس البورد الجزء الأول / MRCS Part A — والمرحلة 0 (النجاة) منجزة قبل أن تطأ القسم.</div>
+
+  <footer>خريطة طريق تعليميّة · تُحدَّث مع تقدّمنا · قارنها بدليل برنامجك الرسميّ</footer>
+</div>
+</body>
+</html>
