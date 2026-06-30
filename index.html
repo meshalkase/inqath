@@ -219,6 +219,17 @@ footer{text-align:center; color:var(--faint); font-size:.72rem; padding:18px 0 6
 .daydone{font-size:.8rem; color:var(--good); margin-top:4px}
 .vnote{margin-top:10px; font-size:.74rem; color:var(--amber); background:rgba(245,185,127,.08); border:1px solid rgba(245,185,127,.3); border-radius:9px; padding:7px 10px; line-height:1.6}
 .tnote{margin-top:10px; font-size:.82rem; color:var(--good); background:rgba(127,209,163,.09); border:1px solid rgba(127,209,163,.3); border-radius:9px; padding:8px 11px; line-height:1.7}
+/* وضع السنة */
+.ylegend{display:flex; flex-wrap:wrap; gap:10px; align-items:center; font-size:.72rem; color:var(--muted); margin:0 0 14px; padding:0 2px}
+.yitem{display:flex; align-items:center; gap:9px; padding:9px 2px; border-top:1px solid var(--line)}
+.yitem:first-child{border-top:none}
+.yname{flex:1; font-size:.9rem; line-height:1.5}
+.lvl{font-size:.64rem; padding:2px 8px; border-radius:999px; border:1px solid var(--line2); color:var(--muted); white-space:nowrap}
+.lvl.indep{color:var(--good); border-color:rgba(127,209,163,.4)}
+.lvl.sup{color:var(--amber); border-color:rgba(245,185,127,.4)}
+.lvl.know{color:var(--faint)}
+.pri{font-size:.75rem; flex:0 0 auto}
+.pri.high{color:var(--danger)} .pri.med{color:var(--amber)} .pri.later{color:var(--faint)}
 
 @media (prefers-reduced-motion: reduce){ .card{transition:none} .rb:hover{transform:none} .ctile:hover{transform:none} .critbar:hover{transform:none} }
 
@@ -249,6 +260,7 @@ footer{text-align:center; color:var(--faint); font-size:.72rem; padding:18px 0 6
     <div class="brand"><span class="dot"></span><div>إنقاذ<small>بطاقات النجاة — سنة أولى جراحة</small></div></div>
     <div class="spacer"></div>
     <div class="duepill" id="duepill">مستحقّ: <b>0</b></div>
+    <button class="iconbtn" id="langBtn" title="ترجمة / Translate">ع</button>
     <button class="iconbtn" id="themeBtn" title="الوضع">◐</button>
   </div>
 </header>
@@ -259,6 +271,7 @@ footer{text-align:center; color:var(--faint); font-size:.72rem; padding:18px 0 6
   <div class="tabs" role="tablist">
     <div class="tab emerg" data-mode="emergency" role="tab" aria-selected="false"><span class="ti">🚨</span>طوارئ</div>
     <div class="tab" data-mode="plan" role="tab" aria-selected="true"><span class="ti">🗓️</span>الخطة</div>
+    <div class="tab" data-mode="year" role="tab" aria-selected="false"><span class="ti">📅</span>السنة</div>
     <div class="tab" data-mode="review" role="tab" aria-selected="false"><span class="ti">🔁</span>مراجعة</div>
     <div class="tab" data-mode="scenarios" role="tab" aria-selected="false"><span class="ti">🩺</span>حالات</div>
     <div class="tab" data-mode="quiz" role="tab" aria-selected="false"><span class="ti">⚡</span>اختبار</div>
@@ -354,6 +367,114 @@ const VID = {
   10:'ATLS — Primary Survey (xABCDE)', 11:'Med School Insiders — Surgical Knot Tying',
   12:'ICU Advantage — Hyperkalemia', 13:'Geeky Medics — SBAR Handover', 14:'',
 };
+
+/* ====================== وضع «السنة» — جدول الكفاءات ======================
+   l: know|sup|indep · p: high|med|later */
+const YEAR = [
+ {e:'Procedural Skills',a:'المهارات الإجرائية',items:[
+   {e:'Suturing & knot-tying',a:'الغرز والعقد',l:'indep',p:'high'},
+   {e:'Wound closure & local anaesthesia',a:'إغلاق الجروح والتخدير الموضعي',l:'indep',p:'high'},
+   {e:'Abscess incision & drainage (I&D)',a:'شقّ وتصريف الخراج',l:'indep',p:'high'},
+   {e:'NG tube',a:'الأنبوب الأنفي المعدي',l:'indep',p:'high'},
+   {e:'Urinary catheter',a:'القسطرة البولية',l:'indep',p:'high'},
+   {e:'IV access / venepuncture / ABG',a:'الوصول الوريدي/ABG',l:'indep',p:'high'},
+   {e:'Wound, drain & stoma care',a:'العناية بالجروح والمصارف والفغرات',l:'indep',p:'high'},
+   {e:'Scrub / gown / glove (aseptic)',a:'التعقيم والتحضير',l:'indep',p:'high'},
+   {e:'FAST / eFAST ultrasound',a:'FAST بالسونار',l:'sup',p:'high'},
+   {e:'Chest drain',a:'الأنبوب الصدري',l:'sup',p:'med'},
+   {e:'Paracentesis',a:'البزل البطني',l:'sup',p:'med'},
+   {e:'Assisting in laparoscopy',a:'دور المساعد في المنظار',l:'sup',p:'med'},
+   {e:'Central venous line',a:'الخط الوريدي المركزي',l:'know',p:'later'},
+ ]},
+ {e:'Preoperative Assessment',a:'التقييم قبل العملية',items:[
+   {e:'Risk assessment & ASA I–V',a:'الخطورة وASA',l:'sup',p:'high'},
+   {e:'Informed consent',a:'الموافقة المستنيرة',l:'sup',p:'high'},
+   {e:'Fasting (NPO) rules',a:'الصيام',l:'indep',p:'high'},
+   {e:'Perioperative meds (anticoag/diabetes/steroid)',a:'الأدوية حول العملية',l:'sup',p:'high'},
+   {e:'Antibiotic prophylaxis (within 60 min)',a:'الوقاية بالمضاد',l:'sup',p:'high'},
+   {e:'VTE prophylaxis',a:'الوقاية من الخثار',l:'indep',p:'high'},
+   {e:'Cardiac/preop workup',a:'التقييم القلبي والفحوص',l:'sup',p:'med'},
+ ]},
+ {e:'Postop & Ward Care',a:'العناية بعد العملية والجناح',items:[
+   {e:'Fluids & electrolytes',a:'السوائل والكهارل',l:'sup',p:'high'},
+   {e:'Analgesia (WHO ladder, safe opioids)',a:'تسكين الألم',l:'sup',p:'high'},
+   {e:'Postop fever (5 Ws)',a:'الحمى بعد العملية',l:'indep',p:'high'},
+   {e:'Postop complications (leak, ileus, dehiscence)',a:'مضاعفات ما بعد العملية',l:'sup',p:'high'},
+   {e:'Early warning scores (NEWS/MEWS)',a:'درجات الإنذار المبكر',l:'indep',p:'high'},
+   {e:'Blood transfusion & reactions',a:'نقل الدم',l:'sup',p:'high'},
+   {e:'Nutrition (enteral/parenteral)',a:'التغذية',l:'sup',p:'med'},
+   {e:'Postop oliguria / AKI',a:'قلة البول/AKI',l:'sup',p:'med'},
+ ]},
+ {e:'Critical Care & Resuscitation',a:'العناية الحرجة والإنعاش',items:[
+   {e:'Shock & its types',a:'الصدمة وأنواعها',l:'sup',p:'high'},
+   {e:'Sepsis & septic shock (Sepsis-6)',a:'الإنتان',l:'sup',p:'high'},
+   {e:'Recognising the deteriorating patient (ABCDE)',a:'المريض المتدهور',l:'indep',p:'high'},
+   {e:'Acid–base / ABG interpretation',a:'التوازن الحمضي-القاعدي',l:'sup',p:'high'},
+   {e:'CPR (BLS) & ACLS principles',a:'الإنعاش القلبي الرئوي',l:'sup',p:'high'},
+   {e:'Oxygenation & ventilation basics',a:'مبادئ التهوية والأكسجة',l:'know',p:'med'},
+ ]},
+ {e:'Emergency Surgery',a:'الحالات الطارئة',items:[
+   {e:'Acute abdomen approach',a:'نهج البطن الحاد',l:'indep',p:'high'},
+   {e:'Appendicitis (Alvarado/PAS)',a:'التهاب الزائدة',l:'sup',p:'high'},
+   {e:'Biliary (Tokyo 2018)',a:'المرارة/الأقنية',l:'sup',p:'high'},
+   {e:'Obstruction / strangulated hernia',a:'الانسداد/الفتق المختنق',l:'sup',p:'high'},
+   {e:'Perforation / mesenteric ischaemia (never miss)',a:'الانثقاب/المساريقا',l:'sup',p:'high'},
+   {e:'GI bleed (Blatchford)',a:'نزف الجهاز الهضمي',l:'sup',p:'high'},
+   {e:'Testicular torsion (TWIST)',a:'التواء الخصية',l:'sup',p:'high'},
+   {e:'Necrotising fasciitis / Fournier',a:'نخر اللفافة',l:'sup',p:'high'},
+   {e:'Trauma / ATLS (xABCDE, eFAST)',a:'الإصابات/ATLS',l:'sup',p:'high'},
+   {e:'Burns (Parkland / referral)',a:'الحروق',l:'sup',p:'med'},
+ ]},
+ {e:'Common Elective Surgery',a:'الحالات الانتخابية الشائعة',items:[
+   {e:'Hernias (inguinal/umbilical/incisional)',a:'الفتوق',l:'know',p:'med'},
+   {e:'Gallstone disease',a:'حصى المرارة',l:'know',p:'med'},
+   {e:'Anorectal (haemorrhoids, fissure, fistula, pilonidal)',a:'الأمراض الشرجية',l:'sup',p:'med'},
+   {e:'Breast disease (lump, abscess, red flags)',a:'أمراض الثدي',l:'know',p:'med'},
+   {e:'Skin & subcutaneous lesions',a:'آفات الجلد',l:'sup',p:'med'},
+   {e:'Thyroid / parathyroid',a:'الدرقية/الدريقات',l:'know',p:'later'},
+   {e:'Colorectal (IBD, polyps)',a:'القولون والمستقيم',l:'know',p:'later'},
+ ]},
+ {e:'Surgical Oncology Basics',a:'أساسيات الأورام',items:[
+   {e:'Cancer principles & TNM staging',a:'مبادئ السرطان والتدرّج',l:'know',p:'med'},
+   {e:'Common cancers',a:'السرطانات الشائعة',l:'know',p:'med'},
+   {e:'Red-flag referral signs',a:'العلامات الحمراء للإحالة',l:'indep',p:'high'},
+   {e:'MDT principle',a:'الفريق متعدّد التخصصات',l:'know',p:'later'},
+ ]},
+ {e:'Adjacent Specialties',a:'التخصصات المجاورة',items:[
+   {e:'Urology emergencies (retention, colic, acute scrotum)',a:'المسالك الطارئة',l:'sup',p:'high'},
+   {e:'Vascular emergencies (acute limb ischaemia 6 Ps, AAA, DVT)',a:'الأوعية الطارئة',l:'sup',p:'high'},
+   {e:'ORTHOPAEDIC emergencies (open fractures Gustilo, compartment syndrome, dislocations, septic joint)',a:'العظام الطارئة (مسارك)',l:'sup',p:'high'},
+   {e:'Head injury / GCS triage',a:'رضّ الرأس',l:'sup',p:'high'},
+   {e:'Thoracic (pneumothorax, chest drain)',a:'الصدر',l:'sup',p:'med'},
+ ]},
+ {e:'Imaging & Investigations',a:'التصوير والتحاليل',items:[
+   {e:'Chest X-ray (systematic)',a:'صورة الصدر',l:'sup',p:'high'},
+   {e:'Abdominal X-ray',a:'صورة البطن',l:'sup',p:'high'},
+   {e:'CT abdomen/chest basics',a:'أساسيات CT',l:'know',p:'med'},
+   {e:'POCUS (FAST, gallbladder, bladder)',a:'السونار عند السرير',l:'sup',p:'med'},
+   {e:'Bloods & ABG interpretation',a:'التحاليل وغازات الدم',l:'indep',p:'high'},
+   {e:'ECG basics',a:'تخطيط القلب',l:'sup',p:'med'},
+ ]},
+ {e:'Core Pharmacology',a:'الأدوية الأساسية',items:[
+   {e:'Analgesics (WHO ladder)',a:'المسكّنات',l:'sup',p:'high'},
+   {e:'Antibiotics & stewardship',a:'المضادات الحيوية',l:'sup',p:'high'},
+   {e:'IV fluids',a:'السوائل الوريدية',l:'sup',p:'high'},
+   {e:'Anticoagulants & reversal',a:'مضادات التخثّر والعكس',l:'sup',p:'high'},
+   {e:'Local anaesthetic (max doses, toxicity)',a:'المخدّر الموضعي',l:'sup',p:'high'},
+   {e:'Antiemetics / emergency drugs',a:'مضادات القيء',l:'sup',p:'med'},
+ ]},
+ {e:'Documentation & Professionalism',a:'التوثيق والمهنية',items:[
+   {e:'Medical documentation',a:'التوثيق الطبي',l:'indep',p:'high'},
+   {e:'Structured handover (SBAR)',a:'التسليم SBAR',l:'indep',p:'high'},
+   {e:'Consent, capacity, confidentiality',a:'الموافقة والأهلية والسرّية',l:'sup',p:'high'},
+   {e:'Escalation to the team',a:'التصعيد للفريق',l:'indep',p:'high'},
+   {e:'Breaking bad news (SPIKES)',a:'كسر الأخبار الصعبة',l:'sup',p:'med'},
+   {e:'Death certification',a:'شهادة الوفاة',l:'know',p:'med'},
+   {e:'Error reporting (M&M / incident)',a:'الأخطاء والإبلاغ',l:'know',p:'med'},
+ ]},
+];
+const YLVL={know:{e:'Knows',a:'يعرف'},sup:{e:'Supervised',a:'بإشراف'},indep:{e:'Independent',a:'مستقل'}};
+const YPRI={high:{e:'High',a:'عالية'},med:{e:'Med',a:'متوسطة'},later:{e:'Later',a:'لاحقة'}};
 
 const CARDS = [
 /* ===== A — التقييم والتصعيد ===== */
@@ -611,6 +732,38 @@ const TIPS = {
 (function(){ CARDS.forEach(c=>{ if(TIPS[c.id]) c.tip=TIPS[c.id]; }); })();
 function tnote(c){ return c.tip ? '<div class="tnote">💡 '+c.tip+'</div>' : ''; }
 
+/* الإنجليزيّة-أوّل: overlay للأرقام الحرِجة (الباقي يُحوَّل تباعاً) */
+const CARDS_EN = {
+ A2:{front:"In Disability (D), what must you never forget?",back:"<b>Blood glucose</b> (DEFG = Don\'t Ever Forget Glucose) + level of consciousness (GCS or AVPU) + pupils."},
+ A3:{front:"Components and range of the GCS?",back:"Eye <b>E4</b> · Verbal <b>V5</b> · Motor <b>M6</b>. Range <b>3</b> (lowest) to <b>15</b>. <b>GCS ≤ 8 = threatened airway</b> → call anaesthetics."},
+ B1:{front:"Parameters of high-quality chest compressions?",back:"Rate <b>100–120</b>/min · depth <b>5–6 cm</b> · ratio <b>30:2</b> · switch compressor every <b>2 min</b> · minimise interruptions."},
+ B2:{front:"Shockable rhythm (VF/pVT): when do you give adrenaline & amiodarone?",back:"<b>Adrenaline 1 mg IV</b> after the 3rd shock, then every <b>3–5 min</b>.<br><b>Amiodarone 300 mg IV</b> after <b>3</b> shocks, then <b>150 mg</b> after the 5th."},
+ B3:{front:"Non-shockable rhythm (PEA/Asystole)?",back:"CPR + <b>Adrenaline 1 mg IV immediately</b>, then every <b>3–5 min</b>. <b>No shock.</b>"},
+ B5:{front:"Reversible causes of arrest (4H/4T)?",back:"<b>4H:</b> Hypoxia · Hypovolaemia · Hypo/Hyperkalaemia & metabolic · Hypothermia.<br><b>4T:</b> Tension pneumothorax · Tamponade · Toxins · Thrombosis (PE/MI)."},
+ B6:{front:"Unstable bradycardia (adverse signs)?",back:"<b>Atropine 500 mcg IV</b>, repeat every 3–5 min up to <b>3 mg</b> max. No response → <b>pacing</b> (or 2nd-line drugs)."},
+ C2:{front:"The Sepsis Six (first-hour bundle)?",back:"1) Blood cultures <b>before</b> antibiotics · 2) <b>broad-spectrum antibiotics within 1 hour</b> · 3) measure <b>lactate</b> · 4) IV fluids · 5) measure urine output · 6) oxygen."},
+ C3:{front:"Fluid dose in sepsis with hypoperfusion?",back:"<b>30 mL/kg</b> balanced crystalloid within the first <b>3 hours</b>, then reassess repeatedly."},
+ D2:{front:"Dose & route of adrenaline in anaphylaxis (adult)?",back:"<b>0.5 mg IM</b> (= 500 mcg = <b>0.5 mL of 1:1000</b>) into the anterolateral thigh. <b>IM not IV.</b>"},
+ D3:{front:"When do you repeat adrenaline in anaphylaxis?",back:"Every <b>5 minutes</b> if symptoms do not improve."},
+ D4:{front:"Role of antihistamines & steroids in anaphylaxis?",back:"<b>Not first-line, and never before adrenaline and fluids.</b> IM adrenaline is the life-saving treatment."},
+ E2:{front:"Cardiac protection in hyperkalaemia?",back:"<b>Calcium gluconate 10% — 10 mL IV</b> slowly with cardiac monitoring; repeat if ECG changes persist. (Protects the heart, does not lower K⁺.)"},
+ E3:{front:"How do you shift potassium intracellularly?",back:"<b>Insulin (soluble) 10 units + 25 g glucose IV.</b> <b>Monitor blood glucose</b> (risk of delayed hypoglycaemia)."},
+ F1:{front:"Red cell transfusion threshold?",back:"<b>Hb &lt; 70 g/L</b> (or <b>&lt; 80</b> if cardiac/critically ill). One unit raises Hb by ~<b>10 g/L</b>."},
+ F5:{front:"Massive transfusion protocol ratio?",back:"<b>1:1:1</b> (red cells : plasma : platelets) — gold standard in haemorrhagic shock."},
+ F6:{front:"TXA dose in trauma?",back:"<b>1 g over 10 min then 1 g over 8 h</b>, if given <b>within 3 hours</b> of injury. (<b>2 g</b> bolus in TBI.)"},
+ F7:{front:"Maximum paracetamol dose?",back:"<b>1 g every 6 hours</b>, max <b>4 g/day</b>. Reduce if weight &lt; 50 kg or hepatic impairment."},
+ F8:{front:"Maximum local anaesthetic doses?",back:"<b>Lidocaine 3 mg/kg</b> (<b>7 mg/kg</b> with adrenaline) · <b>Bupivacaine 2 mg/kg</b>.<br>Remember: <b>1% = 10 mg/mL</b>."},
+ F9:{front:"Treatment of local anaesthetic systemic toxicity (LAST)?",back:"Stop injection · ABC + 100% O₂ · treat seizures · <b>Intralipid 20%</b> · prolonged resuscitation may be needed."},
+ G9:{front:"Hypotension + unilateral absent air entry + tracheal deviation?",back:"<b>Tension pneumothorax</b> — <b>clinical diagnosis, not radiological.</b> Immediate needle decompression / chest drain."},
+ L4:{front:"Framework for managing DKA?",back:"<b>① Fluids first:</b> 0.9% sodium chloride. <b>② Fixed-rate insulin: 0.1 unit/kg/h.</b> <b>③ Potassium:</b> monitor & replace. <b>④ When BG &lt; 14:</b> add <b>10% dextrose</b>. Treat the precipitant."},
+ L6:{front:"How do you manage hypoglycaemia?",back:"<b>DEFG.</b> Glucose &lt; 4 with symptoms: conscious & swallows → fast oral carbs; otherwise → <b>IV glucose (e.g. 10%)</b> or <b>IM glucagon</b>. Recheck. Always test glucose in any reduced consciousness."},
+ P1:{front:"Priority in burn assessment — why airway first?",back:"<b>ABCDE</b> — airway first because <b>inhalation injury</b> can obstruct the airway rapidly. Red flags: facial burns, singed nasal hair, soot, hoarseness, stridor, enclosed-space fire. <b>Secure the airway early (anaesthetics)</b> + 100% O₂."},
+ P3:{front:"Burn fluid resuscitation (Parkland)?",back:"<b>4 mL × weight(kg) × %TBSA</b> Ringer\'s lactate / 24 h — <b>half in the first 8 hours from the time of the burn</b>. (Modern: start <b>2 mL/kg/%</b> then titrate.) <b>Titrate to urine 0.5–1 mL/kg/h.</b>"},
+ Q1:{front:"Pharmacological VTE prophylaxis?",back:"<b>Enoxaparin 40 mg SC once daily</b> (CrCl ≥ 30). <b>Severe renal (CrCl 15–30): 20 mg daily.</b> Plus mechanical (stockings/IPC). <b>Assess bleeding risk</b>; hold around surgery per protocol."},
+ Q5:{front:"Unbreakable drug-safety rules & high-alert drugs?",back:"<b>Always:</b> check <b>allergies</b>, adjust for <b>renal/hepatic</b>, check interactions. <b>High-alert:</b> insulin, opioids, anticoagulants, <b>concentrated potassium</b>. <b>Never give KCl as an IV bolus.</b> When in doubt, ask pharmacy."},
+};
+(function(){ CARDS.forEach(c=>{ if(CARDS_EN[c.id]){ c.front_en=CARDS_EN[c.id].front; c.back_en=CARDS_EN[c.id].back; } }); })();
+
 
 /* ====================== التخزين (يعمل في كل البيئات) ====================== */
 const Store = (()=> {
@@ -665,7 +818,11 @@ function isDue(id){ const s=SRS[id]; return !s || s.due<=Date.now(); }
 function dueCount(){ return CARDS.filter(c=>c.type==='fact' && isDue(c.id)).length; }
 
 /* ====================== الحالة ====================== */
-let mode='plan', moduleFilter='all', queue=[], qi=0, flipped=false, scnIdx=0, crisisSel=null, planStart=null, studyDays=[];
+let mode='plan', moduleFilter='all', queue=[], qi=0, flipped=false, scnIdx=0, crisisSel=null, planStart=null, studyDays=[], lang='en';
+/* اللغة: إنجليزيّ-أوّل مع ترجمة احتياطيّة للعربيّة */
+function T(c,f){ return (lang==='en' && c[f+'_en']) ? c[f+'_en'] : (c[f]||''); }
+function toggleLang(){ lang = (lang==='en'?'ar':'en'); Store.set('inqath_lang_v1',lang); updateLangBtn(); render(); }
+function updateLangBtn(){ const b=document.getElementById('langBtn'); if(b) b.textContent=(lang==='en'?'ع':'EN'); }
 
 const $=s=>document.querySelector(s), app=$('#app');
 function modCards(types){ return CARDS.filter(c=> (moduleFilter==='all'|| (moduleFilter==='crit'? c.crit : c.mod===moduleFilter)) && types.includes(c.type)); }
@@ -698,6 +855,7 @@ function render(){
   setDuePill();
   if(mode==='emergency'){ return renderEmergency(); }
   if(mode==='plan'){ return renderPlan(); }
+  if(mode==='year'){ return renderYear(); }
   if(mode==='ref'){ return renderRef(); }
   if(mode==='scenarios'){ return renderScenario(); }
   // review / quiz
@@ -718,13 +876,13 @@ function render(){
       <div class="card ${c.danger?'danger':''} ${flipped?'flip':''}" id="card">
         <div class="face front">
           <div class="tagrow"><span class="tag ${c.danger?'red':''}">${c.danger?'🔴 ':''}${mod.name}</span><span class="tag" style="background:rgba(255,255,255,.05);color:var(--faint);border-color:var(--line)">${c.id}</span></div>
-          <div class="qlabel">سؤال</div>
-          <div class="front-q">${c.front}</div>
-          <div class="fliphint">انقر للكشف عن الإجابة</div>
+          <div class="qlabel">${lang==='en'?'Question':'سؤال'}</div>
+          <div class="front-q" dir="auto">${T(c,'front')}</div>
+          <div class="fliphint">${lang==='en'?'Tap to reveal':'انقر للكشف عن الإجابة'}</div>
         </div>
         <div class="face back">
-          <div class="qlabel">الإجابة</div>
-          <div class="back-a">${c.back}</div>
+          <div class="qlabel">${lang==='en'?'Answer':'الإجابة'}</div>
+          <div class="back-a" dir="auto">${T(c,'back')}</div>
           <div class="ref"><b>المصدر:</b> ${c.ref}</div>
           ${tnote(c)}${vnote(c)}
         </div>
@@ -757,7 +915,7 @@ function renderScenario(){
   app.innerHTML = `
     <div class="scn">
       <div class="tagrow"><span class="tag ${c.danger?'red':''}">${c.danger?'🔴 ':''}${mod.name}</span><span class="tag" style="background:rgba(255,255,255,.05);color:var(--faint);border-color:var(--line)">حالة ${qi+1}/${queue.length}</span></div>
-      <div class="vignette"><b>السيناريو:</b> ${c.front}</div>
+      <div class="vignette" dir="auto"><b>${lang==='en'?'Scenario:':'السيناريو:'}</b> ${T(c,'front')}</div>
       ${c.steps.map((st,i)=>`
         <div class="step" id="st${i}">
           <div class="sq" onclick="document.getElementById('st${i}').classList.toggle('open')"><span class="n">${i+1}.</span><span>${st.q}</span></div>
@@ -779,7 +937,7 @@ function renderRef(){
     const cs = CARDS.filter(c=>c.mod===m.id);
     return `<div class="acc" id="acc-${m.id}">
       <div class="acc-h" onclick="document.getElementById('acc-${m.id}').classList.toggle('open')">${m.danger?'🔴 ':''}${m.name}<span class="cnt">${cs.length} بطاقة ▾</span></div>
-      <div class="acc-b">${cs.map(c=>`<div class="refcard"><div class="rq">${c.type==='scenario'?'🩺 ':''}${c.front}</div>${c.type==='fact'?`<div class="ra">${c.back}</div>`:`<div class="ra">${c.steps.map((s,i)=>`<div style="margin:4px 0"><b>${i+1}.</b> ${s.q}<br><span style="color:var(--faint)">↳ ${s.a}</span></div>`).join('')}</div>`}<div class="rs">${c.ref}</div>${tnote(c)}${vnote(c)}</div>`).join('')}</div>
+      <div class="acc-b">${cs.map(c=>`<div class="refcard"><div class="rq" dir="auto">${c.type==='scenario'?'🩺 ':''}${T(c,'front')}</div>${c.type==='fact'?`<div class="ra" dir="auto">${T(c,'back')}</div>`:`<div class="ra">${c.steps.map((s,i)=>`<div style="margin:4px 0"><b>${i+1}.</b> ${s.q}<br><span style="color:var(--faint)">↳ ${s.a}</span></div>`).join('')}</div>`}<div class="rs">${c.ref}</div>${tnote(c)}${vnote(c)}</div>`).join('')}</div>
     </div>`;
   }).join('');
 }
@@ -795,7 +953,7 @@ function renderEmergency(){
     return;
   }
   const cr=CRISES.find(c=>c.id===crisisSel);
-  const blocks = cr.cards.map(id=>{ const c=cardById(id); if(!c) return ''; return `<div class="pblock"><div class="pq">${c.front}</div><div class="pa">${c.back}</div><div style="font-size:.68rem;color:var(--faint);margin-top:8px">${c.ref}</div>${tnote(c)}</div>`; }).join('');
+  const blocks = cr.cards.map(id=>{ const c=cardById(id); if(!c) return ''; return `<div class="pblock"><div class="pq" dir="auto">${T(c,'front')}</div><div class="pa" dir="auto">${T(c,'back')}</div><div style="font-size:.68rem;color:var(--faint);margin-top:8px">${c.ref}</div>${tnote(c)}</div>`; }).join('');
   const sbar = cr.sbar ? sbarHTML() : '';
   const scen = cr.scen ? (()=>{ const s=cardById(cr.scen); if(!s||!s.steps) return ''; return `<div class="title-sm">حالة تدريبيّة</div><div class="pblock"><div class="pq">🩺 ${s.front}</div><div class="pa">${s.steps.map((st,i)=>`<div style="margin:6px 0"><b>${i+1}. ${st.q}</b><br><span style="color:var(--muted)">↳ ${st.a}</span></div>`).join('')}</div></div>`; })() : '';
   app.innerHTML = `<button class="backbtn" onclick="crisisSel=null;render();window.scrollTo(0,0)">← كل الطوارئ</button>
@@ -884,6 +1042,21 @@ function renderPlan(){
   const vbar = verifyList().length? `<div style="font-size:.78rem;color:var(--amber);margin:0 0 12px;padding:8px 12px;border:1px dashed rgba(245,185,127,.35);border-radius:10px">📌 <b>${verifyList().length}</b> بطاقات بقيمة معياريّة عالميّة تنتظر تأكيدك ببروتوكول مستشفاك — ستظهر منبّهة أثناء التمارين.</div>`:'';
   app.innerHTML = hello + stats + critbar + tenbtn + leechbar + vbar + datebar + todayCard + checklist + list;
 }
+/* ====================== وضع السنة ====================== */
+function maxPri(d){ if(d.items.some(i=>i.p==='high'))return 'high'; if(d.items.some(i=>i.p==='med'))return 'med'; return 'later'; }
+function renderYear(){
+  $('#chips').innerHTML='';
+  const en = lang==='en';
+  const phases = en
+   ? '<b>Months 1–3:</b> all High + Independent. · <b>4–8:</b> High Supervised. · <b>9–12:</b> Med/Later + electives & oncology. Log every procedure + supervision level.'
+   : '<b>الأشهر 1–3:</b> كل «عالية + مستقل». · <b>4–8:</b> «عالية بإشراف». · <b>9–12:</b> «متوسطة/لاحقة» + الانتخابية والأورام. سجّل كل إجراء ومستوى إشرافك.';
+  const legend = `<div class="ylegend"><span class="lvl indep">${YLVL.indep[en?'e':'a']}</span><span class="lvl sup">${YLVL.sup[en?'e':'a']}</span><span class="lvl know">${YLVL.know[en?'e':'a']}</span> · <span class="pri high">●</span>${YPRI.high[en?'e':'a']} <span class="pri med">●</span>${YPRI.med[en?'e':'a']} <span class="pri later">●</span>${YPRI.later[en?'e':'a']}</div>`;
+  const body = YEAR.map((d,i)=>`<div class="acc" id="yacc-${i}">
+     <div class="acc-h" onclick="document.getElementById('yacc-${i}').classList.toggle('open')"><span class="pri ${maxPri(d)}">●</span> ${en?d.e:d.a}<span class="cnt">${d.items.length} ${en?'items':'بند'} ▾</span></div>
+     <div class="acc-b">${d.items.map(it=>`<div class="yitem"><span class="yname" dir="auto">${en?it.e:it.a}</span><span class="lvl ${it.l}">${YLVL[it.l][en?'e':'a']}</span><span class="pri ${it.p}" title="${YPRI[it.p][en?'e':'a']}">●</span></div>`).join('')}</div>
+   </div>`).join('');
+  app.innerHTML = `<div class="crisis-intro" style="border-color:var(--accent-dim);background:linear-gradient(135deg,rgba(45,212,191,.1),rgba(45,212,191,.03))">${en?'<b>Year curriculum</b> — competency matrix. The level shows what is expected of a first-year (Knows / Supervised / Independent).':'<b>منهج السنة</b> — جدول الكفاءات. المستوى يوضّح المتوقّع منك كسنة أولى (يعرف / بإشراف / مستقل).'}<br>${phases}</div>${legend}${body}`;
+}
 function filterRef(q){
   q=(q||'').trim().toLowerCase();
   document.querySelectorAll('#app .acc').forEach(acc=>{
@@ -902,7 +1075,7 @@ function switchMode(m){
   mode=m;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.mode===m));
   if(m==='emergency'){ crisisSel=null; $('#chips').innerHTML=''; render(); return; }
-  if(m==='plan'){ $('#chips').innerHTML=''; render(); return; }
+  if(m==='plan'||m==='year'){ $('#chips').innerHTML=''; render(); return; }
   if(moduleFilter!=='all'){ const ok = CARDS.some(c=>c.mod===moduleFilter && (m==='scenarios'?c.type==='scenario':c.type==='fact')); if(!ok && m!=='ref') moduleFilter='all'; }
   renderChips(); buildQueue(); render();
 }
@@ -930,6 +1103,7 @@ $('#chips').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if
 
 /* السمة */
 $('#themeBtn').onclick = async ()=>{ const cur=document.documentElement.getAttribute('data-theme'); const nx=cur==='light'?'':'light'; document.documentElement.setAttribute('data-theme',nx); await Store.set(TKEY,nx); };
+$('#langBtn').onclick = ()=> toggleLang();
 
 /* keyboard: space=flip, 1-4=rate */
 document.addEventListener('keydown', e=>{
@@ -945,7 +1119,8 @@ document.addEventListener('keydown', e=>{
   try{ const ps=await Store.get(PKEY); if(ps) planStart=parseInt(ps)||null; }catch(e){}
   try{ const sd=await Store.get(DKEY); if(sd) studyDays=JSON.parse(sd)||[]; }catch(e){}
   try{ const ts=await Store.get(CKEY); if(ts) taskState=JSON.parse(ts)||{}; }catch(e){}
-  render(); setDuePill();
+  try{ const lg=await Store.get('inqath_lang_v1'); if(lg) lang=lg; }catch(e){}
+  updateLangBtn(); render(); setDuePill();
 })();
 </script>
 </body>
