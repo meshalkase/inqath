@@ -85,6 +85,19 @@ header{
 .qabtn.red{border-color:rgba(255,107,107,.35)} .qabtn.red span{color:var(--danger)}
 .qabtn.amber{border-color:rgba(245,185,127,.4)} .qabtn.amber span{color:var(--amber)}
 .hint{font-size:.84rem; color:var(--muted); background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:11px 14px; margin-top:4px}
+/* بنك الأسئلة */
+.qhead{display:flex; justify-content:space-between; align-items:center; font-size:.8rem; color:var(--faint); margin:6px 0 12px}
+.qstem{background:linear-gradient(160deg,var(--surface2),var(--surface)); border:1px solid var(--line2); border-radius:14px; padding:16px 18px; font-size:1.05rem; line-height:1.85; margin-bottom:14px}
+.qopts{display:flex; flex-direction:column; gap:9px}
+.qopt{text-align:start; background:var(--surface); border:1px solid var(--line2); color:var(--txt); border-radius:12px; padding:13px 15px; font-family:inherit; font-size:.96rem; cursor:pointer; line-height:1.6; transition:.12s}
+.qopt:hover:not([disabled]){border-color:var(--accent-dim); transform:translateY(-1px)}
+.qopt .ql{display:inline-block; font-weight:700; color:var(--accent); min-width:22px}
+.qopt.correct{background:rgba(127,209,163,.16); border-color:var(--good)}
+.qopt.correct .ql{color:var(--good)}
+.qopt.wrong{background:rgba(255,107,107,.13); border-color:var(--danger)}
+.qopt.wrong .ql{color:var(--danger)}
+.qexp{margin-top:14px; background:rgba(45,212,191,.07); border:1px solid var(--line2); border-radius:12px; padding:14px 16px; font-size:.97rem; line-height:1.9}
+.qsrc{font-size:.7rem; color:var(--faint); margin-top:10px; border-top:1px dashed var(--line); padding-top:8px}
 .tab{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:10px 4px; text-align:center; cursor:pointer; transition:.15s; font-size:.8rem; color:var(--muted); font-weight:500}
 .tab .ti{display:block; font-size:1.1rem; margin-bottom:2px}
 .tab[aria-selected="true"]{background:linear-gradient(135deg,var(--surface2),var(--surface)); color:var(--txt); border-color:var(--accent-dim); box-shadow:0 0 0 1px var(--accent-dim) inset}
@@ -1063,7 +1076,7 @@ function dueCount(){ return CARDS.filter(c=>c.type==='fact' && isDue(c.id)).leng
 
 /* ====================== الحالة ====================== */
 let mode='home', smode='review', planView='plan', moduleFilter='all', queue=[], qi=0, flipped=false, scnIdx=0, crisisSel=null, planStart=null, studyDays=[], lang='en';
-const SLAB={review:{a:'مراجعة',e:'Review'},scenarios:{a:'حالات',e:'Cases'},quiz:{a:'اختبار',e:'Quiz'},ref:{a:'مرجع',e:'Reference'}};
+const SLAB={review:{a:'مراجعة',e:'Review'},scenarios:{a:'حالات',e:'Cases'},quiz:{a:'اختبار',e:'Quiz'},qbank:{a:'بنك الأسئلة',e:'Qbank'},ref:{a:'مرجع',e:'Reference'}};
 const PLAB={plan:{a:'الخطة اليوميّة',e:'Daily plan'},year:{a:'منهج السنة',e:'Year matrix'}};
 /* اللغة: إنجليزيّ-أوّل مع ترجمة احتياطيّة للعربيّة */
 function T(c,f){ return (lang==='en' && c[f+'_en']) ? c[f+'_en'] : (c[f]||''); }
@@ -1092,14 +1105,14 @@ function updateChrome(){
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.mode===mode));
   const sub=$('#subbar'), chips=$('#chips');
   if(mode==='study'){
-    sub.innerHTML = ['review','scenarios','quiz','ref'].map(s=>`<button class="subtab ${smode===s?'on':''}" onclick="setSmode('${s}')">${SLAB[s][lang==='en'?'e':'a']}</button>`).join('');
+    sub.innerHTML = ['review','scenarios','quiz','qbank','ref'].map(s=>`<button class="subtab ${smode===s?'on':''}" onclick="setSmode('${s}')">${SLAB[s][lang==='en'?'e':'a']}</button>`).join('');
     renderChips();
   } else if(mode==='plan'){
     sub.innerHTML = ['plan','year'].map(v=>`<button class="subtab ${planView===v?'on':''}" onclick="setPlanView('${v}')">${PLAB[v][lang==='en'?'e':'a']}</button>`).join('');
     chips.innerHTML='';
   } else { sub.innerHTML=''; chips.innerHTML=''; }
 }
-function setSmode(s){ smode=s; if(moduleFilter==='crit') moduleFilter='all'; if(s!=='ref') buildQueue(); render(); window.scrollTo(0,0); }
+function setSmode(s){ smode=s; if(moduleFilter==='crit') moduleFilter='all'; if(s==='qbank'){ qbIdx=0; qbPicked=null; qbScore=0; } else if(s!=='ref'){ buildQueue(); } render(); window.scrollTo(0,0); }
 function setPlanView(v){ planView=v; render(); window.scrollTo(0,0); }
 function setDuePill(){ $('#duepill').innerHTML='مستحقّ: <b>'+dueCount()+'</b>'; }
 
@@ -1117,6 +1130,7 @@ function render(){
   if(mode==='emergency'){ return renderEmergency(); }
   if(mode==='plan'){ return planView==='year'? renderYear() : renderPlan(); }
   // study:
+  if(smode==='qbank'){ return renderQbank(); }
   if(smode==='ref'){ return renderRef(); }
   if(smode==='scenarios'){ return renderScenario(); }
   return renderCards();
@@ -1195,6 +1209,82 @@ function renderScenario(){
 }
 function revealAll(){ document.querySelectorAll('.step').forEach(s=>s.classList.add('open')); }
 
+/* ====================== بنك الأسئلة (SBA بنمط البورد/MRCS) ====================== */
+let qbIdx=0, qbPicked=null, qbScore=0;
+const QBANK = [
+ {id:"FE1", topic:"Fluids & Electrolytes", topic_ar:"السوائل والكهارل", src:"NICE CG174",
+  stem_en:"A 70 kg post-op patient is nil-by-mouth and needs routine maintenance IV fluids. What is the approximate daily water requirement?",
+  stem_ar:"مريض 70 كغ بعد العملية، صائم، يحتاج سوائل صيانة وريدية روتينيّة. ما الحاجة اليوميّة التقريبيّة من الماء؟",
+  opts_en:["500 mL/day","~1750–2100 mL/day (25–30 mL/kg)","3500 mL/day","30 mL/kg per hour","1000 mL/day fixed for all adults"],
+  opts_ar:["500 مل/يوم","~1750–2100 مل/يوم (25–30 مل/كغ)","3500 مل/يوم","30 مل/كغ في الساعة","1000 مل/يوم ثابتة لكل البالغين"],
+  answer:1,
+  ex_en:"NICE maintenance = water 25–30 mL/kg/day → 70 kg ≈ 1750–2100 mL/day, plus ~1 mmol/kg Na⁺/K⁺ and 50–100 g glucose. (A) and (E) under-resuscitate; (C) risks overload/oedema; (D) is a bolus rate, not maintenance.",
+  ex_ar:"الصيانة وفق NICE = ماء 25–30 مل/كغ/يوم → 70 كغ ≈ 1750–2100 مل/يوم، + ~1 مل مول/كغ صوديوم/بوتاسيوم + 50–100غ جلوكوز. (أ/هـ) أقلّ من اللازم، (ج) خطر فرط الحمل، (د) معدّل bolus لا صيانة."},
+ {id:"FE2", topic:"Fluids & Electrolytes", topic_ar:"السوائل والكهارل", src:"UK Kidney Association 2023",
+  stem_en:"A patient with AKI has K⁺ 6.8 mmol/L and peaked T waves on the ECG. What is the FIRST step?",
+  stem_ar:"مريض بإصابة كلوية حادّة: بوتاسيوم 6.8 وموجات T مدبّبة على التخطيط. ما الخطوة الأولى؟",
+  opts_en:["IV insulin + dextrose","Salbutamol nebuliser","IV calcium gluconate 10%","Oral calcium resonium","Urgent haemodialysis"],
+  opts_ar:["إنسولين + جلوكوز وريديّ","سالبوتامول مبخّر","Calcium gluconate 10% وريديّ","Calcium resonium فمويّ","غسيل كلويّ عاجل"],
+  answer:2,
+  ex_en:"With ECG changes, IV calcium gluconate FIRST — it stabilises the myocardium (cardioprotective), buying time. Then insulin+dextrose and salbutamol shift K⁺ into cells; resonium/dialysis remove it but are slower. Calcium does NOT lower K⁺.",
+  ex_ar:"مع تغيّرات التخطيط: الكالسيوم الوريديّ أولاً — يثبّت عضلة القلب (حماية) ويكسب وقتاً. ثم الإنسولين+الجلوكوز والسالبوتامول ينقلان البوتاسيوم للخلايا؛ الراتنج/الغسيل يزيلانه لكن أبطأ. الكالسيوم لا يخفّض البوتاسيوم."},
+ {id:"FE3", topic:"Fluids & Electrolytes", topic_ar:"السوائل والكهارل", src:"European hyponatraemia guideline",
+  stem_en:"A patient with chronic hyponatraemia (Na⁺ 118) is corrected too rapidly. What is the feared complication?",
+  stem_ar:"مريض بنقص صوديوم مزمن (118) صُحّح بسرعة مفرطة. ما المضاعفة المخيفة؟",
+  opts_en:["Cerebral oedema","Osmotic demyelination syndrome","Hyperkalaemia","Hypoglycaemia","Pulmonary oedema"],
+  opts_ar:["وذمة دماغيّة","متلازمة إزالة الميالين التناضحيّة","فرط بوتاسيوم","نقص سكّر","وذمة رئويّة"],
+  answer:1,
+  ex_en:"Over-rapid correction of CHRONIC hyponatraemia causes osmotic demyelination (central pontine myelinolysis). Correct slowly — generally ≤8–10 mmol/L per 24 h. (Cerebral oedema is the danger of acute hyponatraemia itself, not its over-correction.)",
+  ex_ar:"التصحيح السريع لنقص الصوديوم المزمن يسبّب إزالة الميالين التناضحيّة (تلين الجسر المركزيّ). صحّح ببطء — عموماً ≤8–10 مل مول/ل في 24 ساعة. (الوذمة الدماغيّة خطر نقص الصوديوم الحادّ نفسه لا فرط تصحيحه.)"},
+ {id:"FE4", topic:"Fluids & Electrolytes", topic_ar:"السوائل والكهارل", src:"NICE / ATLS 11",
+  stem_en:"A hypovolaemic trauma patient needs initial fluid resuscitation before blood arrives. Which fluid is most appropriate?",
+  stem_ar:"مريض رضح ناقص الحجم يحتاج إنعاش سوائل مبدئيّ قبل وصول الدم. أيّ سائل أنسب؟",
+  opts_en:["5% dextrose","Balanced crystalloid (Hartmann's/Ringer's) bolus","0.45% saline","20% albumin","Large-volume 0.9% saline"],
+  opts_ar:["جلوكوز 5%","بلّوريّة متوازنة (Hartmann/Ringer) bolus","سالين 0.45%","ألبومين 20%","سالين 0.9% بكميّة كبيرة"],
+  answer:1,
+  ex_en:"Balanced crystalloid is first-line for resuscitation. Dextrose/hypotonic fluids distribute poorly intravascularly; large-volume 0.9% saline causes hyperchloraemic acidosis. In trauma: ≤1 L crystalloid then blood, with permissive hypotension (ATLS 11).",
+  ex_ar:"البلّوريّة المتوازنة هي الخطّ الأوّل للإنعاش. الجلوكوز/ناقص التوتّر يتوزّع رديئاً داخل الأوعية؛ والسالين 0.9% بكثرة يسبّب حماضاً فرط كلوريّاً. في الرضح: ≤1 لتر بلّوريّة ثم دم مع permissive hypotension (ATLS 11)."},
+ {id:"FE5", topic:"Fluids & Electrolytes", topic_ar:"السوائل والكهارل", src:"NICE refeeding guidance",
+  stem_en:"A severely malnourished patient started on nutrition develops low phosphate, potassium and magnesium. The diagnosis is:",
+  stem_ar:"مريض سوء تغذية شديد بدأ التغذية، فهبط الفوسفات والبوتاسيوم والمغنيسيوم. التشخيص:",
+  opts_en:["Tumour lysis syndrome","Refeeding syndrome","SIADH","Diabetic ketoacidosis","Addisonian crisis"],
+  opts_ar:["متلازمة انحلال الورم","متلازمة إعادة التغذية","SIADH","الحماض الكيتونيّ السكّريّ","نوبة أديسون"],
+  answer:1,
+  ex_en:"Refeeding syndrome: the insulin surge after feeding drives phosphate, K⁺ and Mg²⁺ intracellularly. Identify at-risk patients, start nutrition slowly, replace electrolytes, and give thiamine before/with feeding.",
+  ex_ar:"متلازمة إعادة التغذية: ارتفاع الإنسولين بعد التغذية يدفع الفوسفات والبوتاسيوم والمغنيسيوم داخل الخلايا. تعرّف على المعرّضين، ابدأ التغذية ببطء، عوّض الشوارد، وأعطِ الثيامين قبل/مع التغذية."},
+ {id:"FE6", topic:"Fluids & Electrolytes", topic_ar:"السوائل والكهارل", src:"Clinical physiology / NICE",
+  stem_en:"A patient given several litres of 0.9% saline develops a metabolic acidosis with a NORMAL lactate. The most likely cause is:",
+  stem_ar:"مريض أُعطي عدّة لترات من سالين 0.9% فأصيب بحماض استقلابيّ مع لاكتات طبيعيّ. السبب الأرجح:",
+  opts_en:["Lactic acidosis","Hyperchloraemic (normal anion gap) acidosis","Diabetic ketoacidosis","Respiratory acidosis","Renal tubular acidosis"],
+  opts_ar:["حماض لبنيّ","حماض فرط كلوريّ (فجوة أنيونيّة طبيعيّة)","حماض كيتونيّ سكّريّ","حماض تنفّسيّ","حماض أنبوبيّ كلويّ"],
+  answer:1,
+  ex_en:"Large-volume 0.9% saline delivers a high chloride load → hyperchloraemic, normal-anion-gap metabolic acidosis. Lactate is normal (not lactic acidosis). Using balanced crystalloids (Hartmann's) avoids this.",
+  ex_ar:"كميّة كبيرة من سالين 0.9% تحمل حمل كلوريد عالياً → حماض فرط كلوريّ بفجوة أنيونيّة طبيعيّة. اللاكتات طبيعيّ (ليس حماضاً لبنيّاً). استعمال البلّوريّة المتوازنة (Hartmann) يتجنّبه."},
+];
+function QT(it,f){ return lang==='en' ? (it[f+'_en']||it[f+'_ar']||'') : (it[f+'_ar']||it[f+'_en']||''); }
+function startQbank(){ mode='study'; smode='qbank'; qbIdx=0; qbPicked=null; qbScore=0; render(); window.scrollTo(0,0); }
+function pickQbank(i){ if(qbPicked!==null) return; qbPicked=i; if(i===QBANK[qbIdx].answer) qbScore++; recordStudy(); render(); }
+function nextQbank(){ qbIdx++; qbPicked=null; render(); window.scrollTo(0,0); }
+function renderQbank(){
+  $('#chips').innerHTML='';
+  const en=lang==='en';
+  if(qbIdx>=QBANK.length){
+    app.innerHTML=`<div class="empty"><div class="big">🎯</div><h3>${en?'Set complete':'انتهت المجموعة'}</h3><p>${en?'Your score':'نتيجتك'}: <b class="num">${qbScore} / ${QBANK.length}</b></p><button class="btn" onclick="startQbank()">${en?'Restart ↻':'من جديد ↻'}</button></div>`;
+    return;
+  }
+  const it=QBANK[qbIdx]; const opts=en?it.opts_en:it.opts_ar; const L=['A','B','C','D','E'];
+  const optsHtml = opts.map((o,i)=>{
+    let cls='qopt';
+    if(qbPicked!==null){ if(i===it.answer) cls+=' correct'; else if(i===qbPicked) cls+=' wrong'; }
+    return `<button class="${cls}" ${qbPicked===null?`onclick="pickQbank(${i})"`:'disabled'} dir="auto"><span class="ql">${L[i]}</span>${o}</button>`;
+  }).join('');
+  const reveal = qbPicked!==null
+    ? `<div class="qexp" dir="auto"><b>${qbPicked===it.answer?(en?'✅ Correct':'✅ صحيح'):(en?'❌ Incorrect — answer: '+L[it.answer]:'❌ خطأ — الصحيح: '+L[it.answer])}</b><br>${QT(it,'ex')}<div class="qsrc">${en?'Source':'المصدر'}: ${it.src}</div></div><button class="btn" onclick="nextQbank()">${en?'Next ←':'التالي ←'}</button>`
+    : '';
+  app.innerHTML = `<div class="qhead"><span>🩺 ${en?it.topic:it.topic_ar}</span><span class="num">${qbIdx+1}/${QBANK.length} · ${qbScore}✓</span></div>
+    <div class="qstem" dir="auto">${QT(it,'stem')}</div>
+    <div class="qopts">${optsHtml}</div>${reveal}`;
+}
 function renderRef(){
   const mods = MODULES.filter(m=>m.id!=='all' && (moduleFilter==='all'||m.id===moduleFilter));
   app.innerHTML = `<div class="searchbar"><input type="search" placeholder="🔎 ابحث في كل البطاقات..." oninput="filterRef(this.value)"></div><div class="title-sm">المرجع السريع — اقرأ دون جدولة</div>` + mods.map(m=>{
@@ -1274,6 +1364,7 @@ function renderHome(){
   const greet = en ? (planStart?(day>14?'You have completed the 14 days 🎉':'You are on <span>day '+day+'</span> of 14'):'Welcome — let us start') : (planStart?(day>14?'أكملت الـ14 يوماً 🎉':'أنت في <span>اليوم '+day+'</span> من 14'):'أهلاً — لنبدأ');
   const stats = `<div class="stats"><div class="stat"><div class="v">${dueCount()}</div><div class="l">${en?'Due today':'مستحقّ اليوم'}</div></div><div class="stat"><div class="v">${masteredPct()}%</div><div class="l">${en?'Mastered':'متقَن'}</div></div><div class="stat"><div class="v">${streakCount()}</div><div class="l">${en?'Streak 🔥':'متتالٍ 🔥'}</div></div></div>`;
   const start = `<button class="homebtn" onclick="startDaily()">⏱️ ${en?"Start today's session":'ابدأ جلسة اليوم'}<small>${en?'criticals + due cards · ~10 min':'الأرقام الحرِجة + المستحقّ · ~10 دقائق'}</small></button>`;
+  const qbtn = `<button class="homebtn" style="background:linear-gradient(135deg,#b05c6e,#7a3d4a);box-shadow:0 14px 36px -16px rgba(176,92,110,.55)" onclick="startQbank()">🩺 ${en?'Surgery Question Bank':'بنك أسئلة الجراحة'}<small>${en?'board / MRCS-style SBA + explanations':'أسئلة بنمط البورد/MRCS + شرح'}</small></button>`;
   const leech=leechCards();
   const qa = `<div class="qarow"><button class="qabtn" onclick="startCriticals()">🎯<span>${en?'Criticals':'الحرِجة'}</span></button>${leech.length?`<button class="qabtn amber" onclick="startLeeches()">🔁<span>${en?'Weak ('+leech.length+')':'العنيدة ('+leech.length+')'}</span></button>`:`<button class="qabtn" onclick="setPlanView('plan');switchMode('plan')">🗓️<span>${en?'Plan':'الخطة'}</span></button>`}<button class="qabtn red" onclick="switchMode('emergency')">🚨<span>${en?'Emergency':'طوارئ'}</span></button></div>`;
   let body;
@@ -1283,7 +1374,7 @@ function renderHome(){
     body = `<div class="datebar"><span>${en?'When do you start the 14-day plan?':'متى تبدأ خطة الـ14 يوماً؟'}</span><button class="btn" onclick="startPlanToday()">${en?'Start today':'أبدأ اليوم'}</button></div>`;
   }
   const vbar = verifyList().length? `<div style="font-size:.76rem;color:var(--amber);margin-top:12px;padding:8px 12px;border:1px dashed rgba(245,185,127,.35);border-radius:10px">📌 ${verifyList().length} ${en?'cards have a global-standard value awaiting your local protocol confirmation.':'بطاقات بقيمة معياريّة تنتظر تأكيدك ببروتوكول مستشفاك.'}</div>`:'';
-  app.innerHTML = `<div class="hello">${greet}</div>${stats}${start}${qa}${body}${vbar}`;
+  app.innerHTML = `<div class="hello">${greet}</div>${stats}${start}${qbtn}${qa}${body}${vbar}`;
 }
 function renderPlan(){
   $('#chips').innerHTML='';
